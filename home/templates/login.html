@@ -20,9 +20,10 @@
               class="illustration"
             />
             <h1 class="opacity">LOGIN</h1>
-            <form>
-              <input type="text" placeholder="USERNAME" />
-              <input type="password" placeholder="PASSWORD" />
+            <form method="POST">
+              {% csrf_token %}
+              <input type="text" placeholder="USERNAME" name="username" />
+              <input type="password" placeholder="PASSWORD" name="password" />
               <button class="opacity">SUBMIT</button>
             </form>
             <!-- 
