@@ -35,7 +35,11 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body">...</div>
+          <div class="modal-body">
+            <form id="form_add_note" action="" method="POST">
+              {% csrf_token %} {{form.as_p}}
+            </form>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -44,7 +48,9 @@
             >
               Close
             </button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button form="form_add_note" type="submit" class="btn btn-primary">
+              Save changes
+            </button>
           </div>
         </div>
       </div>
