@@ -55,6 +55,32 @@
         </div>
       </div>
     </div>
+
+    <div class="container my-5">
+      <div class="row">
+        {% for note in notes %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-header bg-primary text-white py-3">
+              <h5 class="card-title mb-0 fw-bold">{{ note.title }}</h5>
+            </div>
+
+            <div class="card-body">
+              <p class="card-text text-secondary">
+                {{ note.description|linebreaks }}
+              </p>
+            </div>
+
+            <div class="card-footer bg-transparent border-0">
+              <small class="text-muted">
+                <i class="bi bi-calendar"></i> {{ note.created|date:"d M, Y" }}
+              </small>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
   </body>
 </html>
 {% endblock content %}
