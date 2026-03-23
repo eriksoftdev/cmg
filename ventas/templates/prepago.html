@@ -1,56 +1,71 @@
 {% extends 'base.html' %} {% block content %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>Prepago</h1>
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      <i class="bi bi-plus-circle-fill me-1"></i>Prepago
-    </button>
+<div class="container mt-5">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPrepagoModal">
+    <i class="bi bi-plus-circle-fill me-1"></i>Prepago
+  </button>
+</div>
 
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">
-              Nueva Venta Prepago
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">...</div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
-        </div>
+
+<div class="modal fade" id="createPrepagoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Venta Prepago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form_add_note" action="" method="POST">
+          {% csrf_token %}
+          {{form.as_p}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button form="form_add_note" type="submit" class="btn btn-primary">
+          Guardar Prepago
+        </button>
       </div>
     </div>
-  </body>
-</html>
+  </div>
+</div>
+
+
+<!-- Empieza contenido de ventas en tabs-->
+<div class="container mt-4">
+  <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
+    <li class="nav-item">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ventas">
+        <i class="bi bi-list-stars me-1"></i> Ventas
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#seguimiento">
+        <i class="bi bi-clock-history me-1"></i> Seguimiento
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#validadas">
+        <i class="bi bi-check2 me-1"></i> Validadas
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas">
+        <i class="bi bi-check-all me-1"></i> Exitosas
+      </button>
+    </li>
+  </ul>
+</div>
+
+<div class="container mt-4">
+  <div class="tab-content mt-3" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="ventas" role="tabpanel">Ventas</div>
+    <div class="tab-pane fade" id="seguimiento" role="tabpanel">Seguimiento</div>
+    <div class="tab-pane fade" id="validadas" role="tabpanel">Validadas</div>
+    <div class="tab-pane fade" id="exitosas" role="tabpanel">Exitosas</div>
+  </div>
+</div>
+<!-- Termina contenido de ventas en tabs-->
+
 {% endblock content %}
