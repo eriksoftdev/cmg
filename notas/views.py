@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import NotaForm
 from .models import Nota
+from django.contrib import messages
 
 # Create your views here.
 def index_notas(request):
@@ -16,4 +17,24 @@ def index_notas(request):
             new_note = form.save(commit=False)
             new_note.user = request.user
             new_note.save()
+            messages.success(request, '¡Nota creada con éxito!')
             return redirect('notas')
+        else:
+            messages.error(request, '¡Error al crear la nota!')
+            return redirect('notas')
+
+def delete_note(request, note_id):
+    note = get_object_or_404(Nota, id=note_id, user=request.user)
+    note.delete()
+    messages.success(request, '¡Nota eliminada!')
+    return redirect('notas')
+
+def update_note(request, note_id):
+    note = get_object_or_404(Nota, id=note_id, user=request.user)
+    if request.method == 'POST':
+        note.title = request.POST.get('title')
+        note.description = request.POST.get('description')
+        note.save()
+        messages.success(request, '¡Nota actualizada correctamente!')
+        return redirect('notas')
+    return redirect('notas')

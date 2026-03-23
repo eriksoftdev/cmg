@@ -1,86 +1,180 @@
-{% extends 'base.html' %} {% block content %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>Notas</h1>
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      <i class="bi bi-plus-circle-fill me-1"></i>Nota
-    </button>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+    <i class="bi bi-plus-circle-fill me-1"></i>Nota
+  </button>
+</div>
 
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Nota</h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="form_add_note" action="" method="POST">
-              {% csrf_token %} {{form.as_p}}
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button form="form_add_note" type="submit" class="btn btn-primary">
-              Save changes
-            </button>
-          </div>
-        </div>
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Nota</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form_add_note" action="" method="POST">
+          {% csrf_token %}
+          {{form.as_p}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button form="form_add_note" type="submit" class="btn btn-primary">
+          Guardar Nota
+        </button>
       </div>
     </div>
+  </div>
+</div>
+<!--Empieza el toast-->
+{% if messages %}
+{% for message in messages %}
+<div id="myToast" class="toast fade position-fixed end-0 m-3" style="top: 65px; z-index: 1050" role="alert"
+  aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+  <div class="toast-header fs-5">
+    <strong class="me-auto">
+      {% if message.tags == 'error' %}
+      <i class="bi bi-exclamation-triangle text-danger me-1"></i><span class="text-danger">Error</span> {%else %}<i
+        class="bi bi-check-circle text-success me-1"></i>
+      <span class="text-success">Notificación</span>
+      {%endif %}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body">{{ message }}</div>
+</div>
+{% endfor %}
+{% endif %}
+<!--Termina el toast-->
+<!--Empieza tarjeta de nota-->
+<div class="container my-5">
+  <div class="row">
+    {% for note in notes %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+          <h5 class="card-title mb-0 fw-bold">{{ note.title }}</h5>
+        </div>
 
-    <div class="container my-5">
-      <div class="row">
-        {% for note in notes %}
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="card-header bg-primary text-white py-3">
-              <h5 class="card-title mb-0 fw-bold">{{ note.title }}</h5>
-            </div>
+        <div class="card-body">
+          <p class="card-text text-secondary">
+            {{ note.description|linebreaks|truncatewords:50 }}
+          </p>
+        </div>
 
-            <div class="card-body">
-              <p class="card-text text-secondary">
-                {{ note.description|linebreaks }}
-              </p>
-            </div>
+        <div class="card-footer bg-transparent border-0">
+          <small class="text-muted">
+            <i class="bi bi-calendar"></i> {{ note.created|date:"d M Y" }} - {{note.created|time:"g:i a"}}
+            {% if note.updated|date:"U" > note.created|date:"U" %}
+            <span class="ms-2 text-primary">
+              • <i class="bi bi-pencil me-1"></i>
+              hace {{note.updated|timesince|truncatewords:2}}
+            </span>
+            {% endif %}
+          </small>
+        </div>
+        <!-- Empiezan botones de editar y eliminar-->
+        <div class="px-3 pb-3 d-flex gap-3">
+          <button type="button" class="btn btn-sm btn-outline-primary border-0 p-0 ms-1"
+            data-bs-target="#updateModal{{ note.id }}" data-bs-toggle="modal">
+            <i class="bi bi-pencil-fill me-1"></i>Editar/Ver<i class="bi bi-eye-fill ms-1"></i>
+          </button>
 
-            <div class="card-footer bg-transparent border-0">
-              <small class="text-muted">
-                <i class="bi bi-calendar"></i> {{ note.created|date:"d M, Y" }}
-              </small>
+          <button type="button" class="btn btn-sm btn-outline-danger border-0 p-0" data-bs-toggle="modal"
+            data-bs-target="#deleteModal{{note.id}}">
+            <i class="bi bi-trash3"></i>
+            Eliminar
+          </button>
+        </div>
+        <!-- Terminan botones de editar y eliminar-->
+        <!-- Modal para editar-->
+        <div class="modal fade" id="updateModal{{ note.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                  Editar Nota
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="form_update_note{{ note.id }}" action="{% url 'update_note' note.id %}" method="POST">
+                  {% csrf_token %}
+                  <div class="mb-3 d-flex align-items-center">
+                    <label class="form-label mb-0 me-2" style="white-space: nowrap">Título:
+                    </label>
+                    <input type="text" name="title" class="form-control" value="{{ note.title }}" />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Descripción: </label>
+                    <textarea name="description" class="form-control" rows="8">{{ note.description}}</textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Cerrar
+                </button>
+                <button form="form_update_note{{ note.id }}" type="submit" class="btn btn-primary">
+                  Guardar Nota
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        {% endfor %}
+
+        <!--Termina modal de editar-->
+
+        <!-- Modal para eliminar-->
+        <div class="modal fade" id="deleteModal{{note.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title fw-bold text-danger" id="exampleModalLabel">
+                  <i class="bi bi-exclamation-triangle text-danger me-1"></i>
+                  Eliminar Nota
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                <p class="fs-5">
+                  ¿Seguro que deseas eliminar
+                  <strong>{{ note.title}}</strong>?
+                </p>
+                <form id="form_delete_note{{note.id}}" action="{% url 'delete_note' note.id %}" method="POST">
+                  {% csrf_token %}
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-danger" form="form_delete_note{{note.id}}">
+                  <i class="bi bi-trash3 me-1"></i>Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Termina modal de eliminar-->
       </div>
     </div>
-  </body>
-</html>
+    {% endfor %}
+  </div>
+</div>
+<!--Termina tarjeta de nota-->
+
+<!-- script para ejecutar el toast -->
+<script>
+  const toastElement = document.getElementById("myToast");
+  if (toastElement) {
+    bootstrap.Toast.getOrCreateInstance(toastElement).show();
+  }
+</script>
 {% endblock content %}
