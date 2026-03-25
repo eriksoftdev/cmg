@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .forms import NotaForm
 from .models import Nota
 from django.contrib import messages
 
 # Create your views here.
+@login_required
 def index_notas(request):
     if request.method == 'GET':
         my_notes = Nota.objects.filter(user=request.user).order_by('-created')
@@ -22,13 +24,15 @@ def index_notas(request):
         else:
             messages.error(request, '¡Error al crear la nota!')
             return redirect('notas')
-
+        
+@login_required
 def delete_note(request, note_id):
     note = get_object_or_404(Nota, id=note_id, user=request.user)
     note.delete()
     messages.success(request, '¡Nota eliminada!')
     return redirect('notas')
 
+@login_required
 def update_note(request, note_id):
     note = get_object_or_404(Nota, id=note_id, user=request.user)
     if request.method == 'POST':

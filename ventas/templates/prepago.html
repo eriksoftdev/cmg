@@ -33,7 +33,7 @@
 
 
 <!-- Empieza contenido de ventas en tabs-->
-<div class="container mt-4">
+<div class="container mt-5 mb-5" id="moduloVentas">
   <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
     <li class="nav-item">
       <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ventas">
@@ -56,9 +56,8 @@
       </button>
     </li>
   </ul>
-</div>
 
-<div class="container mt-4">
+
   <div class="tab-content mt-3" id="pills-tabContent">
     <div class="tab-pane fade show active" id="ventas" role="tabpanel">Ventas</div>
     <div class="tab-pane fade" id="seguimiento" role="tabpanel">Seguimiento</div>
@@ -66,6 +65,8 @@
     <div class="tab-pane fade" id="exitosas" role="tabpanel">Exitosas</div>
   </div>
 </div>
+
+
 <!-- Termina contenido de ventas en tabs-->
 
 {% endblock content %}
