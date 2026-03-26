@@ -1,7 +1,7 @@
 from django.forms import ModelForm
-from .models import VentasPrepago
+from .models import VentaPrepago
 
-class VentasPrepagoForm(ModelForm):
+class VentaPrepagoForm(ModelForm):
     class Meta:
-        model = VentasPrepago
+        model = VentaPrepago
         fields = ['nombre', 'apellido_paterno', 'apellido_materno', 'curp', 'dn', 'nip', ]

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 numeric_validator = RegexValidator(r'^[0-9]*$', 'Solo se permiten números.')
 
 # Create your models here.
-class VentasPrepago(models.Model):
+class VentaPrepago(models.Model):
     nombre = models.CharField('Nombre(s)',max_length=100)
     apellido_paterno = models.CharField('Apellido Paterno', max_length=100)
     apellido_materno = models.CharField('Apellido Materno', max_length=100,blank=True, null=True)
