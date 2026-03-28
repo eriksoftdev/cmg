@@ -9,6 +9,8 @@ from django.contrib import messages
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+
+# Agregar y mostrar ventas prepago
 @login_required
 def prepago(request):
     if request.method == 'GET':
@@ -26,9 +28,18 @@ def prepago(request):
             messages.success(request, '¡Venta prepago creada con éxito!')
             return redirect('prepago')
         else:
-            messages.error(request, '¡Error al crear la nota!')
+            messages.error(request, '¡Error al crear la venta prepago!')
             return redirect('prepago')
+        
+# Eliminar venta prepago       
+@login_required
+def delete_venta_prepago(request, venta_prepago_id):
+    venta_prepago = get_object_or_404(VentaPrepago, id=venta_prepago_id)
+    venta_prepago.delete()
+    messages.success(request, '¡Venta prepago eliminada!')
+    return redirect('prepago')
 
+# Agregar y mostrar ventas pospago
 @login_required
 def pospago(request):
     return render(request, 'pospago.html')

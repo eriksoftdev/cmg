@@ -25,12 +25,6 @@ def index_notas(request):
             messages.error(request, '¡Error al crear la nota!')
             return redirect('notas')
         
-@login_required
-def delete_note(request, note_id):
-    note = get_object_or_404(Nota, id=note_id, user=request.user)
-    note.delete()
-    messages.success(request, '¡Nota eliminada!')
-    return redirect('notas')
 
 @login_required
 def update_note(request, note_id):
@@ -41,4 +35,11 @@ def update_note(request, note_id):
         note.save()
         messages.success(request, '¡Nota actualizada correctamente!')
         return redirect('notas')
+    return redirect('notas')
+
+@login_required
+def delete_note(request, note_id):
+    note = get_object_or_404(Nota, id=note_id, user=request.user)
+    note.delete()
+    messages.success(request, '¡Nota eliminada!')
     return redirect('notas')
