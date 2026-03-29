@@ -62,13 +62,15 @@
   <div class="tab-content mt-3" id="pills-tabContent">
     <div class="tab-pane fade show active" id="ventas" role="tabpanel">
       <h1>Ventas</h1>
-      <table class="table table-hover">
+      <table class="table table-hover align-middle">
         <thead>
           <tr>
             <th scope="col">CLIENTE</th>
             <th scope="col">CURP</th>
             <th scope="col">DN</th>
             <th scope="col">NIP</th>
+            <th scope="col">CONTACTO</th>
+            <th scope="col">FVC</th>
             <th scope="col"> VENDEDOR</th>
             <th scope="col" class="text-center">ACCIONES</th>
           </tr>
@@ -89,6 +91,14 @@
             <td>{{venta_prepago.dn}}</td>
             <td>{{venta_prepago.nip}}</td>
             <td>
+              <ul class="list-unstyled mb-0">
+                <li><i class="bi bi-telephone me-1"></i>{{venta_prepago.contact1}}</li>
+                <li><i class="bi bi-telephone-fill me-1"></i>{{venta_prepago.contact2}}</li>
+
+              </ul>
+            </td>
+            <td>{{venta_prepago.fvc|date:"d/m/Y"}}</td>
+            <td>
               <div class="text-muted small">
                 <i class="bi bi-person-circle me-2"
                   style="color: #94a3b8; font-size: 1rem;"></i>{{venta_prepago.user.first_name}}
@@ -96,9 +106,12 @@
             </td>
             <td class="text-center">
               <div class="btn-group" role="group">
-                <a href="#" class="btn btn-sm btn-outline-primary" title="Editar">
+
+                <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal"
+                  data-bs-target="#updatePrepagoModal{{venta_prepago.id}}">
                   <i class="bi bi-pencil-fill"></i>
-                </a>
+                </button>
+
                 <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal"
                   data-bs-target="#deletePrepagoModal{{venta_prepago.id}}">
                   <i class="bi bi-trash3"></i>
