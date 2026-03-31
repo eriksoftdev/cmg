@@ -6,9 +6,9 @@
   </button>
 </div>
 
-
+<!-- Modal agregar prepago -->
 <div class="modal fade" id="createPrepagoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Venta Prepago</h1>
@@ -17,7 +17,20 @@
       <div class="modal-body">
         <form id="form_add_note" action="" method="POST">
           {% csrf_token %}
-          {{form.as_p}}
+          <div class="container-fluid">
+            <!-- Contenido de form prepago en 3 columns -->
+            <div class="row">
+              {% for field in form %}
+              <div class="col-md-4 mb-3"> <label class="form-label font-weight-bold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <!-- Fin Contenido de form prepago en 3 columns -->
         </form>
       </div>
       <div class="modal-footer">
@@ -31,6 +44,7 @@
     </div>
   </div>
 </div>
+<!-- Fin Modal agregar prepago -->
 
 
 <!-- Empieza contenido de ventas en tabs-->
@@ -41,25 +55,28 @@
         <i class="bi bi-list-stars me-1"></i> Ventas
       </button>
     </li>
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#seguimiento">
-        <i class="bi bi-clock-history me-1"></i> Seguimiento
-      </button>
-    </li>
+
     <li class="nav-item">
       <button class="nav-link" data-bs-toggle="tab" data-bs-target="#validadas">
-        <i class="bi bi-check2 me-1"></i> Validadas
+        <i class="bi bi-shield-check me-1"></i> Validadas
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas">
+        <i class="bi bi-cash-coin me-1"></i> Exitosas
       </button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas">
-        <i class="bi bi-check-all me-1"></i> Exitosas
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos">
+        <i class="bi bi-x-octagon me-1"></i> Rechazos
       </button>
     </li>
   </ul>
 
 
   <div class="tab-content mt-3" id="pills-tabContent">
+    <!-- Empiezatab-pane ventas-->
     <div class="tab-pane fade show active" id="ventas" role="tabpanel">
       <h1>Ventas</h1>
       <table class="table table-hover align-middle">
@@ -116,6 +133,98 @@
                   data-bs-target="#deletePrepagoModal{{venta_prepago.id}}">
                   <i class="bi bi-trash3"></i>
                 </button>
+
+                <!-- Modal para editar-->
+                <div class="modal fade" id="updatePrepagoModal{{ venta_prepago.id }}" tabindex="-1"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Editar Venta Prepago
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="form_update_venta_prepago{{ venta_prepago.id }}"
+                          action="{% url 'update_venta_prepago' venta_prepago.id %}" method="POST">
+                          {% csrf_token %}
+                          <!-- Se muestran los campos con los datos de la venta en 3 columns-->
+                          <div class="row text-start">
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label ">NOMBRES(S)</label>
+                              <input type=" text" name="nombre" class="form-control"
+                                value="{{ venta_prepago.nombre }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">APELLIDO PATERNO</label>
+                              <input type="text" name="apellido_paterno" class="form-control"
+                                value="{{ venta_prepago.apellido_paterno }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">APELLIDO MATERNO</label>
+                              <input type="text" name="apellido_materno" class="form-control"
+                                value="{{ venta_prepago.apellido_materno }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">CURP</label>
+                              <input type="text" name="curp" class="form-control" value="{{ venta_prepago.curp }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">DN</label>
+                              <input type="text" name="dn" class="form-control" value="{{ venta_prepago.dn }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">NIP</label>
+                              <input type="text" name="nip" class="form-control" value="{{ venta_prepago.nip }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">CONTACTO 1</label>
+                              <input type="text" name="contact1" class="form-control"
+                                value="{{ venta_prepago.contact1 }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">CONTACTO 2</label>
+                              <input type="text" name="contact2" class="form-control"
+                                value="{{ venta_prepago.contact2 }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">FVC</label>
+                              <input type="date" name="fvc" class="form-control"
+                                value="{{ venta_prepago.fvc|date:'Y-m-d' }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label d-block">VALIDADA</label>
+                              <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="validar"
+                                  id="validar{{ venta_prepago.id }}" {% if venta_prepago.validar %}checked{% endif %}>
+                                <label class="form-check-label" for="validar{{ venta_prepago.id }}">
+                                  Confirmar validación
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <!--Termina seccion de campos de venta en 3 columns-->
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                          Cerrar
+                        </button>
+                        <button form="form_update_venta_prepago{{ venta_prepago.id }}" type="submit"
+                          class="btn btn-primary">
+                          Guardar Prepago
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!--Termina modal de editar-->
+
+
+
+
                 <!-- Modal para eliminar-->
                 <div class="modal fade" id="deletePrepagoModal{{venta_prepago.id}}" tabindex="-1"
                   aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -159,9 +268,219 @@
         </tbody>
       </table>
     </div>
-    <div class="tab-pane fade" id="seguimiento" role="tabpanel">Seguimiento</div>
-    <div class="tab-pane fade" id="validadas" role="tabpanel">Validadas</div>
+    <!-- Termina seccion de tab-pane de ventas -->
+
+    <!-- Empieza seccion de tab-pane de ventas  validadas-->
+    <div class="tab-pane fade" id="validadas" role="tabpanel">Validadas
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">CLIENTE</th>
+            <th scope="col">CURP</th>
+            <th scope="col">DN</th>
+            <th scope="col">NIP</th>
+            <th scope="col">CONTACTO</th>
+            <th scope="col">FVC</th>
+            <th scope="col"> VENDEDOR</th>
+            <th scope="col">VALIDADOR</th>
+            <th scope="col" class="text-center">ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for venta_prepago in ventas_prepago_validadas %}
+          <tr>
+            <th scope="row">
+              <span class="badge rounded-pill p-2 me-2"
+                style="background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5;">
+                <i class="bi bi-person-fill"></i>
+                {{venta_prepago.nombre|first|upper}}{{venta_prepago.apellido_paterno|first|upper}}
+              </span>
+              {{venta_prepago.nombre}} {{venta_prepago.apellido_paterno}}
+              {{venta_prepago.apellido_materno}}
+            </th>
+            <td>{{venta_prepago.curp}}</td>
+            <td>{{venta_prepago.dn}}</td>
+            <td>{{venta_prepago.nip}}</td>
+            <td>
+              <ul class="list-unstyled mb-0">
+                <li><i class="bi bi-telephone me-1"></i>{{venta_prepago.contact1}}</li>
+                <li><i class="bi bi-telephone-fill me-1"></i>{{venta_prepago.contact2}}</li>
+
+              </ul>
+            </td>
+            <td>{{venta_prepago.fvc|date:"d/m/Y"}}</td>
+            <td>
+              <div class="text-muted small">
+                <i class="bi bi-person-circle me-2"
+                  style="color: #94a3b8; font-size: 1rem;"></i>{{venta_prepago.user.first_name}}
+              </div>
+            </td>
+            <td>
+              <div class="text-muted small">
+                <i class="bi bi-person-check me-2"
+                  style="color: #94a3b8; font-size: 1rem;"></i>{{venta_prepago.user.first_name}}
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="btn-group" role="group">
+
+                <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal"
+                  data-bs-target="#updatePrepagoModal{{venta_prepago.id}}">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+
+                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal"
+                  data-bs-target="#deletePrepagoModal{{venta_prepago.id}}">
+                  <i class="bi bi-trash3"></i>
+                </button>
+
+                <!-- Modal para editar-->
+                <div class="modal fade" id="updatePrepagoModal{{ venta_prepago.id }}" tabindex="-1"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Editar Venta Prepago
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="form_update_venta_prepago{{ venta_prepago.id }}"
+                          action="{% url 'update_venta_prepago' venta_prepago.id %}" method="POST">
+                          {% csrf_token %}
+                          <!-- Se muestran los campos con los datos de la venta en 3 columns-->
+                          <div class="row text-start">
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label ">NOMBRES(S)</label>
+                              <input type=" text" name="nombre" class="form-control"
+                                value="{{ venta_prepago.nombre }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">APELLIDO PATERNO</label>
+                              <input type="text" name="apellido_paterno" class="form-control"
+                                value="{{ venta_prepago.apellido_paterno }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">APELLIDO MATERNO</label>
+                              <input type="text" name="apellido_materno" class="form-control"
+                                value="{{ venta_prepago.apellido_materno }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">CURP</label>
+                              <input type="text" name="curp" class="form-control" value="{{ venta_prepago.curp }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">DN</label>
+                              <input type="text" name="dn" class="form-control" value="{{ venta_prepago.dn }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">NIP</label>
+                              <input type="text" name="nip" class="form-control" value="{{ venta_prepago.nip }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">CONTACTO 1</label>
+                              <input type="text" name="contact1" class="form-control"
+                                value="{{ venta_prepago.contact1 }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">CONTACTO 2</label>
+                              <input type="text" name="contact2" class="form-control"
+                                value="{{ venta_prepago.contact2 }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label">FVC</label>
+                              <input type="date" name="fvc" class="form-control"
+                                value="{{ venta_prepago.fvc|date:'Y-m-d' }}" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label d-block">VALIDADA</label>
+                              <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="validar"
+                                  id="validar{{ venta_prepago.id }}" {% if venta_prepago.validar %}checked{% endif %}>
+                                <label class="form-check-label" for="validar{{ venta_prepago.id }}">
+                                  Confirmar validación
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <!--Termina seccion de campos de venta en 3 columns-->
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                          Cerrar
+                        </button>
+                        <button form="form_update_venta_prepago{{ venta_prepago.id }}" type="submit"
+                          class="btn btn-primary">
+                          Guardar Prepago
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!--Termina modal de editar-->
+
+
+
+
+                <!-- Modal para eliminar-->
+                <div class="modal fade" id="deletePrepagoModal{{venta_prepago.id}}" tabindex="-1"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-danger" id="exampleModalLabel">
+                          <i class="bi bi-exclamation-triangle text-danger me-1"></i>
+                          Eliminar Venta Prepago
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <p class="fs-5">
+                          ¿Seguro que deseas eliminar la venta de
+                          <strong>{{ venta_prepago.user.first_name}}</strong>?
+                        </p>
+                        <form id="form_delete_venta_prepago{{venta_prepago.id}}"
+                          action="{% url 'delete_venta_prepago' venta_prepago.id %}" method="POST">
+                          {% csrf_token %}
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                          Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-danger"
+                          form="form_delete_venta_prepago{{venta_prepago.id}}">
+                          <i class="bi bi-trash3 me-1"></i>Eliminar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!--Termina modal de eliminar-->
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Termina seccion de tab-pane de ventas validadas-->
+
+
+
+    <!-- Empieza seccion de tab-pane de ventas exitosas -->
     <div class="tab-pane fade" id="exitosas" role="tabpanel">Exitosas</div>
+    <!-- Termina seccion de tab-pane de ventas exitosas-->
+
+    <!-- Empieza seccion de tab-pane de ventas rechazos -->
+    <div class="tab-pane fade" id="rechazos" role="tabpanel">Rechazos</div>
+    <!-- Termina seccion de tab-pane de ventas rechazos -->
+
+
   </div>
 </div>
 

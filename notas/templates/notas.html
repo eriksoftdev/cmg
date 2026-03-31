@@ -72,6 +72,7 @@
           </button>
         </div>
         <!-- Terminan botones de editar y eliminar-->
+
         <!-- Modal para editar-->
         <div class="modal fade" id="updateModal{{ note.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
           aria-hidden="true">
@@ -87,8 +88,7 @@
                 <form id="form_update_note{{ note.id }}" action="{% url 'update_note' note.id %}" method="POST">
                   {% csrf_token %}
                   <div class="mb-3 d-flex align-items-center">
-                    <label class="form-label mb-0 me-2" style="white-space: nowrap">Título:
-                    </label>
+                    <label class="form-label mb-0 me-2" style="white-space: nowrap">Título:</label>
                     <input type="text" name="title" class="form-control" value="{{ note.title }}" />
                   </div>
                   <div class="mb-3">

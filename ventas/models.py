@@ -16,5 +16,6 @@ class VentaPrepago(models.Model):
     contact1 = models.CharField('CONTACTO 1', max_length=10, validators=[numeric_validator, MinLengthValidator(10)])
     contact2 = models.CharField('CONTACTO 2', max_length=10, validators=[numeric_validator, MinLengthValidator(10)])
     fvc = models.DateField('FVC')
+    validar = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
