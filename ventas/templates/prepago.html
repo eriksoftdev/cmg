@@ -86,7 +86,6 @@
         <thead>
           <tr>
             <th scope="col">CLIENTE</th>
-            <th scope="col">CURP</th>
             <th scope="col">DN</th>
             <th scope="col">NIP</th>
             <th scope="col">CONTACTO</th>
@@ -98,30 +97,51 @@
         <tbody>
           {% for venta_prepago in ventas_prepago %}
           <tr>
-            <th scope="row">
-              <span class="badge rounded-pill p-2 me-2"
-                style="background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5;">
-                <i class="bi bi-person-fill"></i>
-                {{venta_prepago.nombre|first|upper}}{{venta_prepago.apellido_paterno|first|upper}}
-              </span>
-              {{venta_prepago.nombre}} {{venta_prepago.apellido_paterno}}
-              {{venta_prepago.apellido_materno}}
+            <th scope="row" class="align-middle">
+              <div class="d-flex align-items-center">
+                <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm"
+                  style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">
+                  {{venta_prepago.nombre|first|upper}}{{venta_prepago.apellido_paterno|first|upper}}
+                </div>
+
+                <div class="d-flex flex-column" style="line-height: 1.2;">
+                  <span class="text-dark fw-bold"
+                    style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                    title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">
+                    {{venta_prepago.nombre}} {{venta_prepago.apellido_paterno}} {{venta_prepago.apellido_materno}}
+                  </span>
+                  <small class="text-muted font-monospace mt-1"
+                    style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;">
+                    <i class="bi bi-card-text me-1"></i>{{venta_prepago.curp}}
+                  </small>
+                </div>
+              </div>
             </th>
-            <td>{{venta_prepago.curp}}</td>
             <td>{{venta_prepago.dn}}</td>
             <td>{{venta_prepago.nip}}</td>
-            <td>
-              <ul class="list-unstyled mb-0">
-                <li><i class="bi bi-telephone me-1"></i>{{venta_prepago.contact1}}</li>
-                <li><i class="bi bi-telephone-fill me-1"></i>{{venta_prepago.contact2}}</li>
-
-              </ul>
+            <td class="align-middle text-center">
+              <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3"
+                data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto"
+                data-bs-content="
+            <div class='text-start small'>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
+              <hr class='my-1'>
+              <i class='bi bi-envelope-fill me-1 text-primary'></i>
+              <span class='text-primary'>{{ venta_prepago.email }}</span>
+            </div>">
+                <i class="bi bi-person-lines-fill text-primary"></i>
+              </button>
             </td>
             <td>{{venta_prepago.fvc|date:"d/m/Y"}}</td>
             <td>
               <div class="text-muted small">
-                <i class="bi bi-person-circle me-2"
-                  style="color: #94a3b8; font-size: 1rem;"></i>{{venta_prepago.user.first_name}}
+                <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br>
+                <span style="font-size: 0.75rem;">
+                  <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:"d/m/y" }}
+                  <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:"g:i a" }}
+                </span>
               </div>
             </td>
             <td class="text-center">
@@ -493,6 +513,7 @@
 
 <script>
   (function () {
+    //Script para leer #tab de la URL
     const params = new URLSearchParams(window.location.search);
     const tabId = params.get('tab');
 
@@ -511,6 +532,35 @@
         target.classList.add('show', 'active');
       }
     }
+    //fin de script para activar la pestaña correcta
+
+    // Script para activar popovers de contacto
+    window.addEventListener('load', function () {
+
+      const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+
+      const popoverList = popoverTriggerList.map(function (el) {
+        return new bootstrap.Popover(el, {
+          trigger: 'click', // Permite que se quede abierto para copiar
+          sanitize: false
+        });
+      });
+
+      // Lógica para cerrar al abrir otro o hacer clic fuera
+      document.addEventListener('click', function (e) {
+        popoverTriggerList.forEach(function (el) {
+          const instance = bootstrap.Popover.getInstance(el);
+          const isClickInsidePopover = document.querySelector('.popover')?.contains(e.target);
+          const isClickOnButton = el.contains(e.target);
+
+          // Si el clic no es en el botón actual Y no es dentro de la burbuja del popover...
+          if (!isClickOnButton && !isClickInsidePopover) {
+            instance.hide();
+          }
+        });
+      });
+    });
+    //fin de script para activar popovers de contacto
   })();
 </script>
 {% endblock content %}

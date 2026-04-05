@@ -38,5 +38,8 @@ class VentaPrepago(models.Model):
         choices=STATUS_CHOICES, 
         default='en_proceso'
     )
+    email = models.EmailField('EMAIL', max_length=254)
+    folio = models.CharField('FOLIO', max_length=100)
+    usuario_marcador = models.CharField('USUARIO MARCADOR', max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
