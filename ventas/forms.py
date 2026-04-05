@@ -84,7 +84,7 @@ class VentaPrepagoForm(ModelForm):
 
     class Meta:
         model = VentaPrepago
-        fields = ['nombre', 'apellido_paterno', 'apellido_materno', 'curp', 'dn', 'nip', 'contact1', 'contact2', 'fvc', 'validar']
+        fields = ['nombre', 'apellido_paterno', 'apellido_materno', 'curp', 'dn', 'nip', 'contact1', 'contact2', 'fvc', 'validar', 'status']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'},),
             'apellido_paterno': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'},),
@@ -92,6 +92,7 @@ class VentaPrepagoForm(ModelForm):
             'fvc': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'min': date.today().isoformat()}, format='%Y-%m-%d'),
             #'validar': forms.HiddenInput(),
             'validar': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
 #Validacion para que los datos nombre, apellidos y curp se guarden en mayusculas para prepago

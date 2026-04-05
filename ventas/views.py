@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import VentaPrepagoForm
 from .models import VentaPrepago
 from django.contrib import messages
+from django.urls import reverse
+
 
 # Create your views here.
 @login_required
@@ -50,8 +52,9 @@ def update_venta_prepago(request, venta_prepago_id):
         venta_prepago.fvc = request.POST.get('fvc')
         venta_prepago.validar = 'validar' in request.POST
         venta_prepago.save()
+        tab = request.GET.get('tab', 'ventas')
         messages.success(request, '¡Venta prepago actualizada correctamente!')
-        return redirect('prepago')
+        return redirect(f"{reverse('prepago')}?tab={tab}")
     return redirect('prepago')
         
 # Eliminar venta prepago       
@@ -60,8 +63,12 @@ def delete_venta_prepago(request, venta_prepago_id):
     venta_prepago = get_object_or_404(VentaPrepago, id=venta_prepago_id)
     venta_prepago.delete()
     messages.success(request, '¡Venta prepago eliminada!')
-    return redirect('prepago')
+    tab = request.GET.get('tab', 'ventas')
+    return redirect(f"{reverse('prepago')}?tab={tab}")
+#endregion
 
+
+#region pospago
 # Agregar y mostrar ventas pospago
 @login_required
 def pospago(request):
@@ -70,3 +77,4 @@ def pospago(request):
 @login_required
 def tarjetas(request):
     return render(request, 'tarjetas.html') 
+#endregion

@@ -17,5 +17,26 @@ class VentaPrepago(models.Model):
     contact2 = models.CharField('CONTACTO 2', max_length=10, validators=[numeric_validator, MinLengthValidator(10)])
     fvc = models.DateField('FVC')
     validar = models.BooleanField(default=False)
+    STATUS_CHOICES = [
+        ('en_proceso', 'EN PROCESO'),
+        ('nip_incorrecto', 'NIP INCORRECTO'),
+        ('curp_incorrecto', 'CURP INCORRECTO'),
+        ('sin_fvc', 'SIN FVC'),
+        ('exitosa', 'EXITOSA'),
+        ('baja_exportada', 'BAJA EXPORTADA'),
+        ('alta', 'ALTA'),
+        ('gestionada_por_otro_call_center', 'GESTIONADA POR OTRO CALL CENTER'),
+        ('sin_nip', 'SIN NIP'),
+        ('futura', 'FUTURA'),
+        ('linea_movistar', 'LINEA MOVISTAR'),
+        ('cac_lejano', 'CAC LEJANO'),
+    ]
+    
+    status = models.CharField(
+        'Status', 
+        max_length=100, 
+        choices=STATUS_CHOICES, 
+        default='en_proceso'
+    )
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
