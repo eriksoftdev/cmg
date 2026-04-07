@@ -50,7 +50,13 @@ def update_venta_prepago(request, venta_prepago_id):
         venta_prepago.contact1 = request.POST.get('contact1')
         venta_prepago.contact2 = request.POST.get('contact2')
         venta_prepago.fvc = request.POST.get('fvc')
-        venta_prepago.validar = 'validar' in request.POST
+        # Lógica de Validación Única
+        if 'validar' in request.POST:
+            venta_prepago.validar = True
+            # Solo asignamos el validador si el campo está vacío (la primera vez)
+            if not venta_prepago.validador:
+                venta_prepago.validador = request.user
+                
         venta_prepago.save()
         tab = request.GET.get('tab', 'ventas')
         messages.success(request, '¡Venta prepago actualizada correctamente!')

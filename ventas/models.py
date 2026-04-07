@@ -42,5 +42,6 @@ class VentaPrepago(models.Model):
     folio = models.CharField('FOLIO', max_length=100)
     usuario_marcador = models.CharField('USUARIO MARCADOR', max_length=100)
     marcador = models.CharField('MARCADOR', max_length=100)
+    validador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='validador')
     created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vendedor')
