@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import VentaPrepagoForm
 from .models import VentaPrepago
 from django.contrib import messages
@@ -38,6 +38,7 @@ def prepago(request):
 
 #update venta prepago
 @login_required
+@permission_required('ventas.change_ventaprepago', raise_exception=True)
 def update_venta_prepago(request, venta_prepago_id):
     venta_prepago = get_object_or_404(VentaPrepago, id=venta_prepago_id)
     if request.method == 'POST':
@@ -65,6 +66,7 @@ def update_venta_prepago(request, venta_prepago_id):
         
 # Eliminar venta prepago       
 @login_required
+@permission_required('ventas.delete_ventaprepago', raise_exception=True)
 def delete_venta_prepago(request, venta_prepago_id):
     venta_prepago = get_object_or_404(VentaPrepago, id=venta_prepago_id)
     venta_prepago.delete()
