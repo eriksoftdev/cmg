@@ -91,6 +91,8 @@
             <th scope="col">CONTACTO</th>
             <th scope="col">FVC</th>
             <th scope="col">VENDEDOR</th>
+            <th scope="col">MARCADOR/USUARIO</th>
+            <th scope="col">FOLIO</th>
             <th scope="col" class="text-center">ACCIONES</th>
           </tr>
         </thead>
@@ -123,7 +125,7 @@
               <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3"
                 data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto"
                 data-bs-content="
-            <div class='text-start small'>
+              <div class='text-start small'>
               <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
               <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
               <hr class='my-1'>
@@ -144,6 +146,10 @@
                 </span>
               </div>
             </td>
+            <td>{{venta_prepago.marcador}}<br>
+              {{venta_prepago.usuario_marcador}}
+            </td>
+            <td>{{venta_prepago.folio}}</td>
             <td class="text-center">
               <div class="btn-group" role="group">
 

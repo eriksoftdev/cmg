@@ -15,26 +15,36 @@ def dashboard(request):
 # Agregar y mostrar ventas prepago
 @login_required
 def prepago(request):
+    # Definimos la jerarquía: Tú (superuser) o el personal de oficina (Validadores/Supervisores)
+    es_superior = request.user.is_superuser or request.user.groups.filter(name__in=['VALIDADORES', 'SUPERVISORES']).exists()
+
     if request.method == 'GET':
-        ventas_prepago = VentaPrepago.objects.filter(user=request.user, validar=False).order_by('-created')
-        ventas_prepago_validadas = VentaPrepago.objects.filter(user=request.user, validar=True).order_by('-created')
+        # FILTRO MAESTRO
+        if es_superior:
+            base_queryset = VentaPrepago.objects.all()
+        else:
+            base_queryset = VentaPrepago.objects.filter(user=request.user)
+
+        # Segmentación para los tabs de la interfaz
+        ventas_prepago = base_queryset.filter(validar=False).order_by('-created')
+        ventas_prepago_validadas = base_queryset.filter(validar=True).order_by('-created')
+
         return render(request, 'prepago.html', {
-        'form': VentaPrepagoForm(),
-        'ventas_prepago': ventas_prepago,
-        'ventas_prepago_validadas': ventas_prepago_validadas
-    })
+            'form': VentaPrepagoForm(),
+            'ventas_prepago': ventas_prepago,
+            'ventas_prepago_validadas': ventas_prepago_validadas,
+            'es_superior': es_superior  # Pasamos esta bandera al HTML
+        })
+    
+    # Lógica POST para crear ventas (El común siempre entra aquí)
     else:
         form = VentaPrepagoForm(request.POST)
         if form.is_valid():
-            new_venta_prepago = form.save(commit=False)
-            new_venta_prepago.user = request.user
-            new_venta_prepago.save()
-            messages.success(request, '¡Venta prepago creada con éxito!')
-            return redirect('prepago')
-        else:
-            messages.error(request, '¡Error al crear la venta prepago!')
-            return redirect('prepago')
-
+            new_venta = form.save(commit=False)
+            new_venta.user = request.user  # El dueño siempre es quien está logueado
+            new_venta.save()
+            messages.success(request, '¡Venta registrada!')
+        return redirect('prepago')
 
 #update venta prepago
 @login_required
@@ -54,6 +64,7 @@ def update_venta_prepago(request, venta_prepago_id):
         # Lógica de Validación Única
         if 'validar' in request.POST:
             venta_prepago.validar = True
+            messages.success(request, '¡Venta prepago validada correctamente!')
             # Solo asignamos el validador si el campo está vacío (la primera vez)
             if not venta_prepago.validador:
                 venta_prepago.validador = request.user
