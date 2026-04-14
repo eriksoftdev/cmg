@@ -32,10 +32,9 @@ class VentaPrepagoForm(ModelForm):
     ],
         widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'inputmode': 'text',  # Cambiado a 'text' porque ya no es solo numérico
-        'pattern': r'[A-Z0-9 ]{10,16}', # Solo permite mayúsculas y números en el navegador
+        'inputmode': 'text',  
+        'pattern': r'[A-Z0-9 ]{10,16}', 
         'required': True,
-        # Ahora el JS permite letras (A-Z) y números (0-9)
         'oninput': "this.value = this.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '')",
     })
 )
@@ -99,10 +98,10 @@ class VentaPrepagoForm(ModelForm):
             #'validar': forms.HiddenInput(),
             'validar': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'folio': forms.TextInput(attrs={'class': 'form-control'}),
-            'usuario_marcador': forms.TextInput(attrs={'class': 'form-control'}),
-            'marcador': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'style': 'text-transform: lowercase;', 'oninput': 'this.value = this.value.toLowerCase()'}),
+            'folio': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'}),
+            'usuario_marcador': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'}),
+            'marcador': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'}),
         }
 
 #Validacion para que los datos nombre, apellidos y curp se guarden en mayusculas para prepago
