@@ -89,14 +89,14 @@ class VentaPrepagoForm(ModelForm):
 
     class Meta:
         model = VentaPrepago
-        fields = ['nombre', 'apellido_paterno', 'apellido_materno', 'curp', 'dn', 'nip', 'fvc','contact1', 'contact2', 'email', 'folio','usuario_marcador','marcador', 'validar', 'status']
+        fields = ['nombre', 'apellido_paterno', 'apellido_materno', 'curp', 'dn', 'nip', 'fvc','contact1', 'contact2', 'email', 'folio','usuario_marcador','marcador', 'acepta_promo', 'status']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'},),
             'apellido_paterno': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'},),
             'apellido_materno': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'},),
             'fvc': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'min': date.today().isoformat()}, format='%Y-%m-%d'),
-            #'validar': forms.HiddenInput(),
-            'validar': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+            'acepta_promo': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'style': 'text-transform: lowercase;', 'oninput': 'this.value = this.value.toLowerCase()'}),
             'folio': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'}),
@@ -120,3 +120,6 @@ class VentaPrepagoForm(ModelForm):
 
     def clean_curp(self):
         return self.cleaned_data.get('curp', '').upper()
+    
+    def clean_email(self):
+        return self.cleaned_data.get('email', '').lower()

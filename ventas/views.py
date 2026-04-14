@@ -26,8 +26,8 @@ def prepago(request):
             base_queryset = VentaPrepago.objects.filter(user=request.user)
 
         # Segmentación para los tabs de la interfaz
-        ventas_prepago = base_queryset.filter(validar=False).order_by('-created')
-        ventas_prepago_validadas = base_queryset.filter(validar=True).order_by('-created')
+        ventas_prepago = base_queryset.filter(acepta_promo=None).order_by('-created')
+        ventas_prepago_validadas = base_queryset.filter(acepta_promo=True).order_by('-created')
 
         return render(request, 'prepago.html', {
             'form': VentaPrepagoForm(),
@@ -68,6 +68,24 @@ def update_venta_prepago(request, venta_prepago_id):
             # Solo asignamos el validador si el campo está vacío (la primera vez)
             if not venta_prepago.validador:
                 venta_prepago.validador = request.user
+        
+
+        if 'acepta_promo' in request.POST:
+            if venta_prepago.acepta_promo is None or request.user.is_superuser:
+                valor = request.POST.get('acepta_promo')
+                if valor == 'True':
+                    venta_prepago.acepta_promo = True
+                elif valor == 'False':
+                    venta_prepago.acepta_promo = False
+                else:
+                    venta_prepago.acepta_promo = None
+                    
+                if not venta_prepago.validador:
+                    venta_prepago.validador = request.user
+                messages.success(request, '¡Venta prepago validada correctamente!')
+            else:
+                messages.error(request, '¡La venta ya fue validada!')
+        
                 
         venta_prepago.save()
         tab = request.GET.get('tab', 'ventas')
