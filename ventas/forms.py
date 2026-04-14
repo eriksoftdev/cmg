@@ -19,19 +19,25 @@ class VentaPrepagoForm(ModelForm):
             'maxlength': 10
         })
 )
+
     contact1 = forms.CharField(
         label='CONTACTO 1',
         min_length=10,
-        max_length=10,
-        validators=[RegexValidator(r'^\d+$', 'Solo se permiten números')],
+        max_length=16,
+        validators=[
+        RegexValidator(
+            r'^[A-Z0-9 ]{10,16}$', 
+            message='El contacto debe tener entre 10 y 16 caracteres (solo letras mayúsculas y números).'
+        )
+    ],
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'inputmode': 'numeric',
-            'pattern': r'\d{10}',
-            'required': True,
-            'oninput': 'this.value = this.value.replace(/[^0-9]/g, "")',
-            'maxlength': 10
-        })
+        'class': 'form-control',
+        'inputmode': 'text',  # Cambiado a 'text' porque ya no es solo numérico
+        'pattern': r'[A-Z0-9 ]{10,16}', # Solo permite mayúsculas y números en el navegador
+        'required': True,
+        # Ahora el JS permite letras (A-Z) y números (0-9)
+        'oninput': "this.value = this.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '')",
+    })
 )
     
     contact2 = forms.CharField(
