@@ -4,7 +4,8 @@ from .forms import VentaPrepagoForm
 from .models import VentaPrepago
 from django.contrib import messages
 from django.urls import reverse
-
+#para ver que se no se envien los mismo registros import time
+#import time 
 
 # Create your views here.
 @login_required
@@ -38,11 +39,18 @@ def prepago(request):
     
     # Lógica POST para crear ventas (El común siempre entra aquí)
     else:
+        # Evitamos que se envien los mismo registros
+        form_data = request.POST.get('curp') + request.POST.get('dn')
+        if request.session.get('last_form') == form_data:
+            return redirect('prepago')
+        
         form = VentaPrepagoForm(request.POST)
         if form.is_valid():
             new_venta = form.save(commit=False)
             new_venta.user = request.user  # El dueño siempre es quien está logueado
+            #time.sleep(10)
             new_venta.save()
+            request.session['last_form'] = form_data
             messages.success(request, '¡Venta registrada!')
         return redirect('prepago')
 

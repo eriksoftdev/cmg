@@ -103,6 +103,21 @@ class VentaPrepagoForm(ModelForm):
             'marcador': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'}),
         }
 
+
+
+    def __init__(self, *args, **kwargs):
+        super(VentaPrepagoForm, self).__init__(*args, **kwargs)
+        
+        # Si el registro es nuevo
+        if not self.instance.pk:
+            # Ocultamos el widget
+            self.fields['acepta_promo'].widget = forms.HiddenInput()
+            self.fields['status'].widget = forms.HiddenInput()
+            
+            # Quitamos el texto del label para que no se vea nada
+            self.fields['acepta_promo'].label = ""
+            self.fields['status'].label = ""
+
 #Validacion para que los datos nombre, apellidos y curp se guarden en mayusculas para prepago
 
 # Validaciones para guardar siempre en MAYÚSCULAS
