@@ -1,0 +1,32 @@
+<div class="modal fade" id="deletePrepagoModal{{venta_prepago.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-danger" id="exampleModalLabel">
+                    <i class="bi bi-exclamation-triangle text-danger me-1"></i>
+                    Eliminar Venta Prepago
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">
+                    ¿Seguro que deseas eliminar la venta de
+                    <strong>{{ venta_prepago.user.first_name}}</strong>?
+                </p>
+                <form id="form_delete_venta_prepago{{venta_prepago.id}}"
+                    action="{% url 'delete_venta_prepago' venta_prepago.id %}" method="POST">
+                    {% csrf_token %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-danger" form="form_delete_venta_prepago{{venta_prepago.id}}">
+                    <i class="bi bi-trash3 me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

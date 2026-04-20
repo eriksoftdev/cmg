@@ -1,0 +1,116 @@
+<div class="modal fade" id="updatePrepagoModal{{ venta_prepago.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Editar Venta Prepago
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form_update_venta_prepago{{ venta_prepago.id }}"
+                    action="{% url 'update_venta_prepago' venta_prepago.id %}" method="POST">
+                    {% csrf_token %}
+                    <!-- Se muestran los campos con los datos de la venta en 3 columns-->
+                    <div class="row text-start">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">NOMBRE(S)</label>
+                            <input type="text" name="nombre" class="form-control" value="{{ venta_prepago.nombre }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">APELLIDO PATERNO</label>
+                            <input type="text" name="apellido_paterno" class="form-control"
+                                value="{{ venta_prepago.apellido_paterno }}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">APELLIDO MATERNO</label>
+                            <input type="text" name="apellido_materno" class="form-control"
+                                value="{{ venta_prepago.apellido_materno|default:'' }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CURP</label>
+                            <input type="text" name="curp" class="form-control" value="{{ venta_prepago.curp }}"
+                                maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">DN</label>
+                            <input type="text" name="dn" class="form-control" value="{{ venta_prepago.dn }}"
+                                maxlength="10" pattern="\d{10}" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">NIP</label>
+                            <input type="text" name="nip" class="form-control" value="{{ venta_prepago.nip }}"
+                                maxlength="4" pattern="\d{4}" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">FVC</label>
+                            <input type="date" name="fvc" class="form-control"
+                                value="{{ venta_prepago.fvc|date:'Y-m-d' }}" min="{% now 'Y-m-d'%}">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CONTACTO 1</label>
+                            <input type="text" name="contact1" class="form-control" value="{{ venta_prepago.contact1 }}"
+                                maxlength="16" pattern="[A-Z0-9 ]{10,16}"
+                                oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CONTACTO 2</label>
+                            <input type="text" name="contact2" class="form-control" value="{{ venta_prepago.contact2 }}"
+                                maxlength="10" pattern="\d{10}" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">EMAIL</label>
+                            <input type="email" name="email" class="form-control" value="{{ venta_prepago.email }}"
+                                style="text-transform: lowercase;" oninput="this.value = this.value.toLowerCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">FOLIO</label>
+                            <input type="text" name="folio" class="form-control" value="{{ venta_prepago.folio }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">USUARIO MARCADOR</label>
+                            <input type="text" name="usuario_marcador" class="form-control"
+                                value="{{ venta_prepago.usuario_marcador }}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">MARCADOR</label>
+                            <input type="text" name="marcador" class="form-control" value="{{ venta_prepago.marcador }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                    </div>
+                    <!--Termina seccion de campos de venta en 3 columns-->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+                <button form="form_update_venta_prepago{{ venta_prepago.id }}" type="submit" class="btn btn-primary">
+                    Guardar Prepago
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
