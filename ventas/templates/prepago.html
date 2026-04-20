@@ -168,19 +168,27 @@
                   <i class="bi bi-trash3"></i>
                 </button>
 
-                <!-- Modal para editar-->
-                {% include 'modals_prepago/modal_editar_prepago.html' %}
-                <!--Termina modal de editar-->
+                <button type="button" class="btn btn-sm btn-outline-primary" title="Ver" data-bs-toggle="modal"
+                  data-bs-target="#detailsPrepagoModal{{venta_prepago.id}}">
+                  <i class="bi bi-eye"></i>
+                </button>
+
+                <!-- Modal para ver detalle-->
+                {% include 'modals_prepago/modal_details_prepago.html' %}
+                <!-- Termina modal para ver detalle-->
 
 
 
 
-                <!-- Modal para eliminar-->
+
+
+                <!-- Modal para editar y eliminar solo si es superior-->
                 {% if es_superior %}
+                {% include 'modals_prepago/modal_editar_prepago.html' %}
                 {% include 'modals_prepago/modal_eliminar_prepago.html' %}
                 {% endif %}
 
-                <!--Termina modal de eliminar-->
+                <!--Termina modal de editar y eliminar-->
               </div>
             </td>
           </tr>
@@ -255,19 +263,13 @@
                   <i class="bi bi-trash3"></i>
                 </button>
 
-                <!-- Modal para editar-->
-                {% include 'modals_prepago/modal_editar_prepago.html' %}
-                <!--Termina modal de editar-->
-
-
-
-
-                <!-- Modal para eliminar-->
+                <!-- Modal para editar y eliminar solo si es superior-->
                 {% if es_superior %}
+                {% include 'modals_prepago/modal_editar_prepago.html' %}
                 {% include 'modals_prepago/modal_eliminar_prepago.html' %}
                 {% endif %}
 
-                <!--Termina modal de eliminar-->
+                <!--Termina modal de editar y eliminar-->
               </div>
             </td>
           </tr>
