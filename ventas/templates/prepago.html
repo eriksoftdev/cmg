@@ -158,6 +158,16 @@
             <td class="text-center">
               <div class="btn-group" role="group">
 
+                <button type="button" class="btn btn-sm btn-outline-primary" title="Ver" data-bs-toggle="modal"
+                  data-bs-target="#detailsPrepagoModal{{venta_prepago.id}}">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <!-- Modal para ver detalle-->
+                {% include 'modals_prepago/modal_details_prepago.html' %}
+                <!-- Termina modal para ver detalle-->
+
+                <!-- Modal y boton para editar y eliminar solo si es superior-->
+                {% if es_superior %}
                 <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal"
                   data-bs-target="#updatePrepagoModal{{venta_prepago.id}}">
                   <i class="bi bi-pencil-fill"></i>
@@ -168,27 +178,12 @@
                   <i class="bi bi-trash3"></i>
                 </button>
 
-                <button type="button" class="btn btn-sm btn-outline-primary" title="Ver" data-bs-toggle="modal"
-                  data-bs-target="#detailsPrepagoModal{{venta_prepago.id}}">
-                  <i class="bi bi-eye"></i>
-                </button>
 
-                <!-- Modal para ver detalle-->
-                {% include 'modals_prepago/modal_details_prepago.html' %}
-                <!-- Termina modal para ver detalle-->
-
-
-
-
-
-
-                <!-- Modal para editar y eliminar solo si es superior-->
-                {% if es_superior %}
                 {% include 'modals_prepago/modal_editar_prepago.html' %}
                 {% include 'modals_prepago/modal_eliminar_prepago.html' %}
                 {% endif %}
 
-                <!--Termina modal de editar y eliminar-->
+                <!--Termina modal y botonde editar y eliminar-->
               </div>
             </td>
           </tr>
