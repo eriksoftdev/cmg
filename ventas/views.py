@@ -69,6 +69,11 @@ def update_venta_prepago(request, venta_prepago_id):
         venta_prepago.contact1 = request.POST.get('contact1')
         venta_prepago.contact2 = request.POST.get('contact2')
         venta_prepago.fvc = request.POST.get('fvc')
+        venta_prepago.email = request.POST.get('email')
+        venta_prepago.folio = request.POST.get('folio')
+        venta_prepago.usuario_marcador = request.POST.get('usuario_marcador')
+        venta_prepago.marcador = request.POST.get('marcador')
+        
         # Lógica de Validación Única
         if 'validar' in request.POST:
             venta_prepago.validar = True
