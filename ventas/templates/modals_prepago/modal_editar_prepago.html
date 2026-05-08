@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <form id="form_update_venta_prepago{{ venta_prepago.id }}"
-                    action="{% url 'update_venta_prepago' venta_prepago.id %}" method="POST">
+                    action="{% url 'update_venta_prepago' venta_prepago.id %}?tab={{ tab_id}}" method="POST">
                     {% csrf_token %}
                     <!-- Se muestran los campos con los datos de la venta en 3 columns-->
                     <div class="row text-start">
@@ -99,6 +99,36 @@
                             <input type="text" name="marcador" class="form-control" value="{{ venta_prepago.marcador }}"
                                 style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
                         </div>
+
+                        {% if es_superior %}
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">ACEPTA PROMO</label>
+                            <select name="acepta_promo" class="form-control">
+                                <option value="" {% if venta_prepago.acepta_promo is None %}selected{% endif %}>PENDIENTE</option>
+                                <option value="True" {% if venta_prepago.acepta_promo == True %}selected{% endif %}>SÍ</option>
+                                <option value="False" {% if venta_prepago.acepta_promo == False %}selected{% endif %}>NO</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if es_supervisor %}
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">ESTADO DE VENTA</label>
+                            <select name="status" class="form-control">
+                                <option value="en_proceso" {% if venta_prepago.status == 'en_proceso' %}selected{% endif %}>EN PROCESO</option>
+                                <option value="nip_incorrecto" {% if venta_prepago.status == 'nip_incorrecto' %}selected{% endif %}>NIP INCORRECTO</option>
+                                <option value="curp_incorrecto" {% if venta_prepago.status == 'curp_incorrecto' %}selected{% endif %}>CURP INCORRECTO</option>
+                                <option value="sin_fvc" {% if venta_prepago.status == 'sin_fvc' %}selected{% endif %}>SIN FVC</option>
+                                <option value="exitosa" {% if venta_prepago.status == 'exitosa' %}selected{% endif %}>EXITOSA</option>
+                                <option value="baja_exportada" {% if venta_prepago.status == 'baja_exportada' %}selected{% endif %}>BAJA EXPORTADA</option>
+                                <option value="alta" {% if venta_prepago.status == 'alta' %}selected{% endif %}>ALTA</option>
+                                <option value="gestionada_por_otro_call_center" {% if venta_prepago.status == 'gestionada_por_otro_call_center' %}selected{% endif %}>GESTIONADA POR OTRO CALL CENTER</option>
+                                <option value="sin_nip" {% if venta_prepago.status == 'sin_nip' %}selected{% endif %}>SIN NIP</option>
+                                <option value="futura" {% if venta_prepago.status == 'futura' %}selected{% endif %}>FUTURA</option>
+                                <option value="linea_movistar" {% if venta_prepago.status == 'linea_movistar' %}selected{% endif %}>LINEA MOVISTAR</option>
+                                <option value="cac_lejano" {% if venta_prepago.status == 'cac_lejano' %}selected{% endif %}>CAC LEJANO</option>
+                            </select>
+                        </div>
+                    {% endif %}
                     </div>
                     <!--Termina seccion de campos de venta en 3 columns-->
                 </form>

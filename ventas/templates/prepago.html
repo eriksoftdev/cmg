@@ -1,350 +1,562 @@
 {% extends 'base.html' %} {% block content %}
+  {% if es_vendedor %}
+    <div class="container mt-5">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPrepagoModal"><i class="bi bi-plus-circle-fill me-1"></i>Prepago</button>
+    </div>
 
-<div class="container mt-5">
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPrepagoModal">
-    <i class="bi bi-plus-circle-fill me-1"></i>Prepago
-  </button>
-</div>
+    <!-- Modal agregar prepago -->
 
-<!-- Modal agregar prepago -->
-<div class="modal fade" id="createPrepagoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Venta Prepago</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="form_add_note" action="" method="POST">
-          {% csrf_token %}
-          <div class="container-fluid">
-            <!-- Contenido de form prepago en 3 columns -->
-            <div class="row">
-              {% for field in form %}
-              <div class="col-md-4 mb-3"> <label class="form-label font-weight-bold">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                <div class="text-danger small">{{ field.errors }}</div>
-                {% endif %}
-              </div>
-              {% endfor %}
-            </div>
+    <div class="modal fade" id="createPrepagoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Venta Prepago</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <!-- Fin Contenido de form prepago en 3 columns -->
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Cerrar
-        </button>
-        <button form="form_add_note" type="submit" class="btn btn-primary">
-          Guardar Prepago
-        </button>
+          <div class="modal-body">
+            <form id="form_add_note" action="" method="POST">
+              {% csrf_token %}
+              <div class="container-fluid">
+                <!-- Contenido de form prepago en 3 columns -->
+                <div class="row">
+                  {% for field in form %}
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label font-weight-bold">{{ field.label }}</label>
+                      {{ field }}
+                      {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors }}</div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <!-- Fin Contenido de form prepago en 3 columns -->
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button form="form_add_note" type="submit" class="btn btn-primary">Guardar Prepago</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-<!-- Fin Modal agregar prepago -->
+  {% endif %}
+  <!-- Fin Modal agregar prepago -->
 
+  <!-- Empieza contenido de ventas en tabs -->
+  <div class="container mt-5 mb-5" id="moduloVentas">
+    <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
+      <li class="nav-item">
+        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas</button>
+      </li>
 
-<!-- Empieza contenido de ventas en tabs-->
-<div class="container mt-5 mb-5" id="moduloVentas">
-  <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
-    <li class="nav-item">
-      <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}"
-        data-bs-toggle="tab" data-bs-target="#ventas">
-        <i class="bi bi-list-stars me-1"></i> Ventas
-      </button>
-    </li>
+      <li class="nav-item">
+        <button class="nav-link {% if request.GET.tab == 'validadas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#validadas"><i class="bi bi-shield-check me-1"></i> Validadas</button>
+      </li>
 
-    <li class="nav-item">
-      <button class="nav-link {% if request.GET.tab == 'validadas' %}active{% endif %}" data-bs-toggle="tab"
-        data-bs-target="#validadas">
-        <i class="bi bi-shield-check me-1"></i> Validadas
-      </button>
-    </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas"><i class="bi bi-cash-coin me-1"></i> Exitosas</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos_promo"><i class="bi bi-shield-x me-1"></i> Rechazos promo</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos"><i class="bi bi-x-octagon me-1"></i> Rechazos</button>
+      </li>
+    </ul>
 
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas">
-        <i class="bi bi-cash-coin me-1"></i> Exitosas
-      </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos_promo">
-        <i class="bi bi-shield-x me-1"></i> Rechazos promo
-      </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos">
-        <i class="bi bi-x-octagon me-1"></i> Rechazos
-      </button>
-    </li>
-  </ul>
+    <div class="tab-content mt-3" id="pills-tabContent">
+      <!-- Empieza tab-pane ventas -->
+      <div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'ventas' %}show active{% endif %}" id="ventas" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">VICIDIAL</th>
+              <th scope="col">FOLIO</th>
+              {% if es_superior %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_prepago in ventas_prepago %}
+              <tr>
+                <th scope="row" class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">{{ venta_prepago.nombre|first|upper }}{{ venta_prepago.apellido_paterno|first|upper }}</div>
 
-
-  <div class="tab-content mt-3" id="pills-tabContent">
-    <!-- Empieza tab-pane ventas-->
-    <div class="tab-pane fade {% if not request.GET.tab or request.GET.tab == 'ventas' %}show active{% endif %}"
-      id="ventas" role="tabpanel">
-      <h1>Ventas</h1>
-      <table class="table table-hover align-middle">
-        <thead>
-          <tr>
-            <th scope="col">CLIENTE</th>
-            <th scope="col">DN</th>
-            <th scope="col">NIP</th>
-            <th scope="col">CONTACTO</th>
-            <th scope="col">FVC</th>
-            <th scope="col">VENDEDOR</th>
-            <th scope="col">VICIDIAL</th>
-            <th scope="col">FOLIO</th>
-            <th scope="col" class="text-center">ACCIONES</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for venta_prepago in ventas_prepago %}
-          <tr>
-            <th scope="row" class="align-middle">
-              <div class="d-flex align-items-center">
-                <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm"
-                  style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">
-                  {{venta_prepago.nombre|first|upper}}{{venta_prepago.apellido_paterno|first|upper}}
-                </div>
-
-                <div class="d-flex flex-column" style="line-height: 1.2;">
-                  <span class="text-dark fw-bold"
-                    style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                    title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">
-                    {{venta_prepago.nombre}} {{venta_prepago.apellido_paterno}} {{venta_prepago.apellido_materno}}
-                  </span>
-                  <small class="text-muted font-monospace mt-1"
-                    style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;">
-                    <i class="bi bi-card-text me-1"></i>{{venta_prepago.curp}}
-                  </small>
-                </div>
-              </div>
-            </th>
-            <td>{{venta_prepago.dn}}</td>
-            <td>{{venta_prepago.nip}}</td>
-            <td class="align-middle text-center">
-              <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3"
-                data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto"
-                data-bs-content="
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                      <span class="text-dark fw-bold" style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}</span>
+                      <small class="text-muted font-monospace mt-1" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_prepago.curp }}</small>
+                    </div>
+                  </div>
+                </th>
+                <td>{{ venta_prepago.dn }}</td>
+                <td>{{ venta_prepago.nip }}</td>
+                <td class="align-middle text-center">
+                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto" data-bs-content="
               <div class='text-start small'>
               <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
               <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
               <hr class='my-1'>
               <i class='bi bi-envelope-fill me-1 text-primary'></i>
               <span class='text-primary'>{{ venta_prepago.email }}</span>
-            </div>">
-                <i class="bi bi-person-lines-fill text-primary"></i>
-              </button>
-            </td>
-            <td>{{venta_prepago.fvc|date:"d/m/Y"}}</td>
-            <td>
-              <div class="text-muted small">
-                <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
-                <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br>
-                <span style="font-size: 0.75rem;">
-                  <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:"d/m/y" }}
-                  <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:"g:i a" }}
-                </span>
-              </div>
-            </td>
-            <td>{{venta_prepago.marcador}}<br>
-              {{venta_prepago.usuario_marcador}}
-            </td>
-            <td>{{venta_prepago.folio}}</td>
-            <td class="text-center">
-              <div class="btn-group" role="group">
+            </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
+                </td>
+                <td>{{ venta_prepago.fvc|date:'d/m/Y' }}</td>
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br />
+                    <span style="font-size: 0.75rem;">
+                      <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:'d/m/y' }}
+                      <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:'g:i a' }}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  {{ venta_prepago.marcador }}<br />
+                  {{ venta_prepago.usuario_marcador }}
+                </td>
+                <td>{{ venta_prepago.folio }}</td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <!-- Modal y boton para editar y eliminar solo si es superior -->
+                    {% if es_superior %}
+                      <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal" data-bs-target="#updatePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-pencil-fill"></i></button>
 
-                <button type="button" class="btn btn-sm btn-outline-primary" title="Ver" data-bs-toggle="modal"
-                  data-bs-target="#detailsPrepagoModal{{venta_prepago.id}}">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <!-- Modal para ver detalle-->
-                {% include 'modals_prepago/modal_details_prepago.html' %}
-                <!-- Termina modal para ver detalle-->
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
 
-                <!-- Modal y boton para editar y eliminar solo si es superior-->
-                {% if es_superior %}
-                <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal"
-                  data-bs-target="#updatePrepagoModal{{venta_prepago.id}}">
-                  <i class="bi bi-pencil-fill"></i>
-                </button>
+                      {% include 'modals_prepago/modal_editar_prepago.html' with tab_id='ventas' %}
+                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='ventas' %}
+                    {% endif %}
 
-                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal"
-                  data-bs-target="#deletePrepagoModal{{venta_prepago.id}}">
-                  <i class="bi bi-trash3"></i>
-                </button>
+                    <!-- Termina modal y botonde editar y eliminar -->
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Termina seccion de tab-pane de ventas -->
 
+      <!-- Empieza seccion de tab-pane de ventas validadas -->
+      <div class="tab-pane fade {% if request.GET.tab == 'validadas' %}show active{% endif %}" id="validadas" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">VALIDADOR</th>
+              <th scope="col">VICIDIAL</th>
+              <th scope="col">FOLIO</th>
+              {% if es_superior %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_prepago in ventas_prepago_validadas %}
+              <tr>
+                <th scope="row" class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">{{ venta_prepago.nombre|first|upper }}{{ venta_prepago.apellido_paterno|first|upper }}</div>
 
-                {% include 'modals_prepago/modal_editar_prepago.html' %}
-                {% include 'modals_prepago/modal_eliminar_prepago.html' %}
-                {% endif %}
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                      <span class="text-dark fw-bold" style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}</span>
+                      <small class="text-muted font-monospace mt-1" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_prepago.curp }}</small>
+                    </div>
+                  </div>
+                </th>
+                <td>{{ venta_prepago.dn }}</td>
+                <td>{{ venta_prepago.nip }}</td>
+                <td class="align-middle text-center">
+                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto" data-bs-content="
+              <div class='text-start small'>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
+              <hr class='my-1'>
+              <i class='bi bi-envelope-fill me-1 text-primary'></i>
+              <span class='text-primary'>{{ venta_prepago.email }}</span>
+            </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
+                </td>
+                <td>{{ venta_prepago.fvc|date:'d/m/Y' }}</td>
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br />
+                    <span style="font-size: 0.75rem;">
+                      <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:'d/m/y' }}
+                      <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:'g:i a' }}
+                    </span>
+                  </div>
+                </td>
 
-                <!--Termina modal y botonde editar y eliminar-->
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.validador.first_name }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  {{ venta_prepago.marcador }}<br />
+                  {{ venta_prepago.usuario_marcador }}
+                </td>
+                <td>{{ venta_prepago.folio }}</td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <!-- Modal y boton para editar y eliminar solo si es superior -->
+                    {% if es_superior %}
+                      <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal" data-bs-target="#updatePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-pencil-fill"></i></button>
+
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
+
+                      {% include 'modals_prepago/modal_editar_prepago.html' with tab_id='validadas' %}
+                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='validadas' %}
+                    {% endif %}
+
+                    <!-- Termina modal y botonde editar y eliminar -->
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Termina seccion de tab-pane de ventas validadas -->
+
+      <!-- Empieza seccion de tab-pane de ventas exitosas -->
+      <div class="tab-pane fade {% if active_tab == 'exitosas' %} show active {% endif %}" id="exitosas" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">VALIDADOR</th>
+              <th scope="col">VICIDIAL</th>
+              <th scope="col">FOLIO</th>
+              {% if es_superior %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_prepago in ventas_prepago_exitosas %}
+              <tr>
+                <th scope="row" class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">{{ venta_prepago.nombre|first|upper }}{{ venta_prepago.apellido_paterno|first|upper }}</div>
+
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                      <span class="text-dark fw-bold" style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}</span>
+                      <small class="text-muted font-monospace mt-1" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_prepago.curp }}</small>
+                    </div>
+                  </div>
+                </th>
+                <td>{{ venta_prepago.dn }}</td>
+                <td>{{ venta_prepago.nip }}</td>
+                <td class="align-middle text-center">
+                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto" data-bs-content="
+              <div class='text-start small'>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
+              <hr class='my-1'>
+              <i class='bi bi-envelope-fill me-1 text-primary'></i>
+              <span class='text-primary'>{{ venta_prepago.email }}</span>
+            </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
+                </td>
+                <td>{{ venta_prepago.fvc|date:'d/m/Y' }}</td>
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br />
+                    <span style="font-size: 0.75rem;">
+                      <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:'d/m/y' }}
+                      <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:'g:i a' }}
+                    </span>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.validador.first_name }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  {{ venta_prepago.marcador }}<br />
+                  {{ venta_prepago.usuario_marcador }}
+                </td>
+                <td>{{ venta_prepago.folio }}</td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <!-- Modal y boton para editar y eliminar solo si es superior -->
+                    {% if es_superior %}
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
+
+                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='exitosas' %}
+                    {% endif %}
+
+                    <!-- Termina modal y botonde editar y eliminar -->
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Termina seccion de tab-pane de ventas exitosas -->
+
+      <!-- Empieza seccion de tab-pane de ventas rechazos promo -->
+      <div class="tab-pane fade {% if active_tab == 'rechazos_promo' %}show active{% endif %}" id="rechazos_promo" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">VALIDADOR</th>
+              <th scope="col">VICIDIAL</th>
+              <th scope="col">FOLIO</th>
+              {% if es_superior %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_prepago in ventas_prepago_rechazos_promo %}
+              <tr>
+                <th scope="row" class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">{{ venta_prepago.nombre|first|upper }}{{ venta_prepago.apellido_paterno|first|upper }}</div>
+
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                      <span class="text-dark fw-bold" style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}</span>
+                      <small class="text-muted font-monospace mt-1" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_prepago.curp }}</small>
+                    </div>
+                  </div>
+                </th>
+                <td>{{ venta_prepago.dn }}</td>
+                <td>{{ venta_prepago.nip }}</td>
+                <td class="align-middle text-center">
+                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto" data-bs-content="
+              <div class='text-start small'>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
+              <hr class='my-1'>
+              <i class='bi bi-envelope-fill me-1 text-primary'></i>
+              <span class='text-primary'>{{ venta_prepago.email }}</span>
+            </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
+                </td>
+                <td>{{ venta_prepago.fvc|date:'d/m/Y' }}</td>
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br />
+                    <span style="font-size: 0.75rem;">
+                      <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:'d/m/y' }}
+                      <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:'g:i a' }}
+                    </span>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.validador.first_name }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  {{ venta_prepago.marcador }}<br />
+                  {{ venta_prepago.usuario_marcador }}
+                </td>
+                <td>{{ venta_prepago.folio }}</td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <!-- Modal y boton para editar y eliminar solo si es superior -->
+                    {% if es_superior %}
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
+
+                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='rechazos_promo' %}
+                    {% endif %}
+
+                    <!-- Termina modal y boton de editar y eliminar -->
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Termina seccion de tab-pane de ventas rechazos promo -->
+
+      <!-- Empieza seccion de tab-pane de ventas rechazos -->
+      <div class="tab-pane fade" id="rechazos" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">VALIDADOR</th>
+              <th scope="col">VICIDIAL</th>
+              <th scope="col">FOLIO</th>
+              <th scope="col">ESTATUS</th>
+              {% if es_superior %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_prepago in ventas_prepago_rechazos %}
+              <tr>
+                <th scope="row" class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">{{ venta_prepago.nombre|first|upper }}{{ venta_prepago.apellido_paterno|first|upper }}</div>
+
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                      <span class="text-dark fw-bold" style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}">{{ venta_prepago.nombre }} {{ venta_prepago.apellido_paterno }} {{ venta_prepago.apellido_materno }}</span>
+                      <small class="text-muted font-monospace mt-1" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_prepago.curp }}</small>
+                    </div>
+                  </div>
+                </th>
+                <td>{{ venta_prepago.dn }}</td>
+                <td>{{ venta_prepago.nip }}</td>
+                <td class="align-middle text-center">
+                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-title="Contacto" data-bs-content="
+              <div class='text-start small'>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact1 }}<br>
+              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
+              <hr class='my-1'>
+              <i class='bi bi-envelope-fill me-1 text-primary'></i>
+              <span class='text-primary'>{{ venta_prepago.email }}</span>
+            </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
+                </td>
+                <td>{{ venta_prepago.fvc|date:'d/m/Y' }}</td>
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.user.first_name }}</span> <br />
+                    <span style="font-size: 0.75rem;">
+                      <i class="bi bi-calendar3 me-1"></i>{{ venta_prepago.created|date:'d/m/y' }}
+                      <i class="bi bi-clock ms-1 me-1"></i>{{ venta_prepago.created|time:'g:i a' }}
+                    </span>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="text-muted small">
+                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
+                    <span class="fw-bold text-dark me-2">{{ venta_prepago.validador.first_name }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  {{ venta_prepago.marcador }}<br />
+                  {{ venta_prepago.usuario_marcador }}
+                </td>
+                <td>{{ venta_prepago.folio }}</td>
+
+                <td title="{{ venta_prepago.get_status_display }}">
+                  <small>{{ venta_prepago.get_status_display|truncatechars:14 }}</small>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <!-- Modal y boton para editar y eliminar solo si es superior -->
+                    {% if es_superior %}
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
+
+                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='rechazos' %}
+                    {% endif %}
+
+                    <!-- Termina modal y botonde editar y eliminar -->
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Termina seccion de tab-pane de ventas rechazos -->
     </div>
-    <!-- Termina seccion de tab-pane de ventas -->
-
-    <!-- Empieza seccion de tab-pane de ventas  validadas-->
-    <div class="tab-pane fade {% if request.GET.tab == 'validadas' %}show active{% endif %}" id="validadas"
-      role="tabpanel">Validadas
-      <table class="table table-hover align-middle">
-        <thead>
-          <tr>
-            <th scope="col">CLIENTE</th>
-            <th scope="col">CURP</th>
-            <th scope="col">DN</th>
-            <th scope="col">NIP</th>
-            <th scope="col">CONTACTO</th>
-            <th scope="col">FVC</th>
-            <th scope="col"> VENDEDOR</th>
-            <th scope="col">VALIDADOR</th>
-            <th scope="col" class="text-center">ACCIONES</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for venta_prepago in ventas_prepago_validadas %}
-          <tr>
-            <th scope="row">
-              <span class="badge rounded-pill p-2 me-2"
-                style="background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5;">
-                <i class="bi bi-person-fill"></i>
-                {{venta_prepago.nombre|first|upper}}{{venta_prepago.apellido_paterno|first|upper}}
-              </span>
-              {{venta_prepago.nombre}} {{venta_prepago.apellido_paterno}}
-              {{venta_prepago.apellido_materno}}
-            </th>
-            <td>{{venta_prepago.curp}}</td>
-            <td>{{venta_prepago.dn}}</td>
-            <td>{{venta_prepago.nip}}</td>
-            <td>
-              <ul class="list-unstyled mb-0">
-                <li><i class="bi bi-telephone me-1"></i>{{venta_prepago.contact1}}</li>
-                <li><i class="bi bi-telephone-fill me-1"></i>{{venta_prepago.contact2}}</li>
-
-              </ul>
-            </td>
-            <td>{{venta_prepago.fvc|date:"d/m/Y"}}</td>
-            <td>
-              <div class="text-muted small">
-                <i class="bi bi-person-circle me-2"
-                  style="color: #94a3b8; font-size: 1rem;"></i>{{venta_prepago.user.first_name}}
-              </div>
-            </td>
-            <td>
-              <div class="text-muted small">
-                <i class="bi bi-person-circle me-2"
-                  style="color: #94a3b8; font-size: 1rem;"></i>{{venta_prepago.validador.first_name}}
-              </div>
-            </td>
-            <td class="text-center">
-              <div class="btn-group" role="group">
-
-                <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal"
-                  data-bs-target="#updatePrepagoModal{{venta_prepago.id}}">
-                  <i class="bi bi-pencil-fill"></i>
-                </button>
-
-                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal"
-                  data-bs-target="#deletePrepagoModal{{venta_prepago.id}}">
-                  <i class="bi bi-trash3"></i>
-                </button>
-
-                <!-- Modal para editar y eliminar solo si es superior-->
-                {% if es_superior %}
-                {% include 'modals_prepago/modal_editar_prepago.html' %}
-                {% include 'modals_prepago/modal_eliminar_prepago.html' %}
-                {% endif %}
-
-                <!--Termina modal de editar y eliminar-->
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    <!-- Termina seccion de tab-pane de ventas validadas-->
-
-
-
-    <!-- Empieza seccion de tab-pane de ventas exitosas -->
-    <div class="tab-pane fade" id="exitosas" role="tabpanel">Exitosas</div>
-    <!-- Termina seccion de tab-pane de ventas exitosas-->
-
-    <!-- Empieza seccion de tab-pane de ventas rechazos promo -->
-    <div class="tab-pane fade" id="rechazos_promo" role="tabpanel">Rechazos promo</div>
-    <!-- Termina seccion de tab-pane de ventas rechazos promo-->
-
-    <!-- Empieza seccion de tab-pane de ventas rechazos -->
-    <div class="tab-pane fade" id="rechazos" role="tabpanel">Rechazos</div>
-    <!-- Termina seccion de tab-pane de ventas rechazos -->
-
-
   </div>
-</div>
-<!-- Termina contenido de ventas en tabs-->
+  <!-- Termina contenido de ventas en tabs -->
 
-<!-- Script para activar la pestaña correcta tras eliminar o editar-->
+  <!-- Script para activar la pestaña correcta tras eliminar o editar -->
 
-<script>
-  (function () {
-    //Script para leer #tab de la URL
-    const params = new URLSearchParams(window.location.search);
-    const tabId = params.get('tab');
-
-    if (tabId) {
-      // 1. Quitamos lo "active" que traiga el HTML por defecto
-      document.querySelectorAll('.nav-link, .tab-pane').forEach(el => {
-        el.classList.remove('active', 'show');
-      });
-
-      // 2. Activamos la pestaña correcta
-      const trigger = document.querySelector(`[data-bs-target="#${tabId}"]`);
-      const target = document.getElementById(tabId);
-
-      if (trigger && target) {
-        trigger.classList.add('active');
-        target.classList.add('show', 'active');
+  <script>
+    ;(function () {
+      //Script para leer #tab de la URL
+      const params = new URLSearchParams(window.location.search)
+      const tabId = params.get('tab')
+    
+      if (tabId) {
+        // 1. Quitamos lo "active" que traiga el HTML por defecto
+        document.querySelectorAll('.nav-link, .tab-pane').forEach((el) => {
+          el.classList.remove('active', 'show')
+        })
+    
+        // 2. Activamos la pestaña correcta
+        const trigger = document.querySelector(`[data-bs-target="#${tabId}"]`)
+        const target = document.getElementById(tabId)
+    
+        if (trigger && target) {
+          trigger.classList.add('active')
+          target.classList.add('show', 'active')
+        }
       }
-    }
-    //fin de script para activar la pestaña correcta
-
-    // Script para activar popovers de contacto
-    window.addEventListener('load', function () {
-
-      const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-
-      const popoverList = popoverTriggerList.map(function (el) {
-        return new bootstrap.Popover(el, {
-          trigger: 'click', // Permite que se quede abierto para copiar
-          sanitize: false
-        });
-      });
-
-      // Lógica para cerrar al abrir otro o hacer clic fuera
-      document.addEventListener('click', function (e) {
-        popoverTriggerList.forEach(function (el) {
-          const instance = bootstrap.Popover.getInstance(el);
-          const isClickInsidePopover = document.querySelector('.popover')?.contains(e.target);
-          const isClickOnButton = el.contains(e.target);
-
-          // Si el clic no es en el botón actual Y no es dentro de la burbuja del popover...
-          if (!isClickOnButton && !isClickInsidePopover) {
-            instance.hide();
-          }
-        });
-      });
-    });
-    //fin de script para activar popovers de contacto
-  })();
-</script>
-{% endblock content %}
+      //fin de script para activar la pestaña correcta
+    
+      // Script para activar popovers de contacto
+      window.addEventListener('load', function () {
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    
+        const popoverList = popoverTriggerList.map(function (el) {
+          return new bootstrap.Popover(el, {
+            trigger: 'click', // Permite que se quede abierto para copiar
+            sanitize: false
+          })
+        })
+    
+        // Lógica para cerrar al abrir otro o hacer clic fuera
+        document.addEventListener('click', function (e) {
+          popoverTriggerList.forEach(function (el) {
+            const instance = bootstrap.Popover.getInstance(el)
+            const isClickInsidePopover = document.querySelector('.popover')?.contains(e.target)
+            const isClickOnButton = el.contains(e.target)
+    
+            // Si el clic no es en el botón actual Y no es dentro de la burbuja del popover...
+            if (!isClickOnButton && !isClickInsidePopover) {
+              instance.hide()
+            }
+          })
+        })
+      })
+      //fin de script para activar popovers de contacto
+    })()
+  </script>
+{% endblock %}
