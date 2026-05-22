@@ -21,6 +21,21 @@ class VentaPrepagoForm(ModelForm):
         })
     )
 
+    nip = forms.CharField(
+        label='NIP',
+        min_length=4,
+        max_length=4,
+        validators=[RegexValidator(r'^\d+$', 'Solo se permiten números')],
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'inputmode': 'numeric',
+            'pattern': r'\d{4}',
+            'required': True,
+            'oninput': 'this.value = this.value.replace(/[^0-9]/g, "")',
+            'maxlength': 4
+        })
+    )
+
     contact1 = forms.CharField(
         label='CONTACTO 1',
         min_length=10,
@@ -52,20 +67,6 @@ class VentaPrepagoForm(ModelForm):
             'required': True,
             'oninput': 'this.value = this.value.replace(/[^0-9]/g, "")',
             'maxlength': 10
-        })
-    )
-    nip = forms.CharField(
-        label='NIP',
-        min_length=4,
-        max_length=4,
-        validators=[RegexValidator(r'^\d+$', 'Solo se permiten números')],
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'inputmode': 'numeric',
-            'pattern': r'\d{4}',
-            'required': True,
-            'oninput': 'this.value = this.value.replace(/[^0-9]/g, "")',
-            'maxlength': 4
         })
     )
 
@@ -107,7 +108,6 @@ class VentaPrepagoForm(ModelForm):
 
 # Funcion para ocultar campos de acepta_promo y status
 
-
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         rol_activo = kwargs.pop('rol_activo', None)
@@ -145,6 +145,7 @@ class VentaPrepagoForm(ModelForm):
 # Validacion para que los datos nombre, apellidos y curp se guarden en mayusculas para prepago
 
 # Validaciones para guardar siempre en MAYÚSCULAS
+
 
     def clean_nombre(self):
         return self.cleaned_data.get('nombre', '').upper()

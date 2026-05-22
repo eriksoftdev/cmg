@@ -1,0 +1,220 @@
+<div class="modal fade" id="updatePospagoModal{{ venta_pospago.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Venta Pospago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form_update_venta_pospago{{ venta_pospago.id }}" action="{% url 'update_venta_pospago' venta_pospago.id %}?tab={{ tab_id }}" method="POST">
+          {% csrf_token %}
+          <!-- Se muestran los campos con los datos de la venta en 3 columns -->
+          <div class="row text-start">
+            <div class="col-md-4 mb-3">
+              <label class="form-label font-weight-bold">NOMBRE(S)</label>
+              <input type="text" name="nombre" class="form-control" value="{{ venta_pospago.nombre }}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label font-weight-bold">APELLIDO PATERNO</label>
+                <input type="text" name="apellido_paterno" class="form-control"
+                                value="{{ venta_pospago.apellido_paterno }}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">APELLIDO MATERNO</label>
+                            <input type="text" name="apellido_materno" class="form-control"
+                                value="{{ venta_pospago.apellido_materno|default:'' }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CURP</label>
+                            <input type="text" name="curp" class="form-control" value="{{ venta_pospago.curp }}"
+                                maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Fecha de Nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" class="form-control" 
+                            value="{{ venta_pospago.fecha_nacimiento|date:'Y-m-d' }}" required>
+                        </div>
+
+
+
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">RFC</label>
+                            <input type="text" name="rfc" class="form-control" value="{{ venta_pospago.rfc }}"
+                                maxlength="13" pattern="[A-Z0-9]{13}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">IDENTIFICACIÓN</label>
+                            <input type="text" name="identificacion" class="form-control" value="{{ venta_pospago.identificacion }}"
+                                maxlength="15" pattern="[A-Z0-9]{15}" style="text-transform: uppercase;"
+                                oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">DN</label>
+                            <input type="text" name="dn" class="form-control" value="{{ venta_pospago.dn }}"
+                                maxlength="10" pattern="\d{10}" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">NIP</label>
+                            <input type="text" name="nip" class="form-control" value="{{ venta_pospago.nip }}"
+                                maxlength="4" pattern="\d{4}" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">FVC</label>
+                            <input type="date" name="fvc" class="form-control"
+                                value="{{ venta_pospago.fvc|date:'Y-m-d' }}" min="{% now 'Y-m-d'%}">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CONTACTO 1</label>
+                            <input type="text" name="contact1" class="form-control" value="{{ venta_pospago.contact1 }}"
+                                maxlength="16" pattern="[A-Z0-9 ]{10,16}"
+                                oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '')" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CONTACTO 2</label>
+                            <input type="text" name="contact2" class="form-control" value="{{ venta_pospago.contact2 }}"
+                                maxlength="10" pattern="\d{10}" inputmode="numeric"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Plan</label>
+                            <select name="plan" class="form-control" required>
+                                <option value="" disabled {% if not venta_pospago.plan %}selected{% endif %}>-- Selecciona un Plan --</option>
+                                <option value="pro_8" {% if venta_pospago.plan == 'pro_8' %}selected{% endif %}>PRO 8</option>
+                                <option value="pro_10" {% if venta_pospago.plan == 'pro_10' %}selected{% endif %}>PRO 10</option>
+                                <option value="pro_14" {% if venta_pospago.plan == 'pro_14' %}selected{% endif %}>PRO 14</option>
+                                <option value="pro_18" {% if venta_pospago.plan == 'pro_18' %}selected{% endif %}>PRO 18</option>
+                                <option value="pro_25" {% if venta_pospago.plan == 'pro_25' %}selected{% endif %}>PRO 25</option>
+                                <option value="pro_35" {% if venta_pospago.plan == 'pro_35' %}selected{% endif %}>PRO 35</option>
+                                <option value="pro_ilimitado" {% if venta_pospago.plan == 'pro_ilimitado' %}selected{% endif %}>PRO ILIMITADO</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">EMAIL</label>
+                            <input type="email" name="email" class="form-control" value="{{ venta_pospago.email }}"
+                                style="text-transform: lowercase;" oninput="this.value = this.value.toLowerCase()">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CP</label>
+                            <input type="text" name="cp" class="form-control" value="{{ venta_pospago.cp }}"
+                                maxlength="5" inputmode="numeric" pattern="\d{5}"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">ESTADO DE LA REPÚBLICA</label>
+                            <select name="estado_republica" class="form-control" required>
+                                <option value="" disabled {% if not venta_pospago.estado_republica %}selected{% endif %}>-- Selecciona un Estado --</option>
+                                <option value="AGUASCALIENTES" {% if venta_pospago.estado_republica == 'AGUASCALIENTES' %}selected{% endif %}>AGUASCALIENTES</option>
+                                <option value="BAJA CALIFORNIA" {% if venta_pospago.estado_republica == 'BAJA CALIFORNIA' %}selected{% endif %}>BAJA CALIFORNIA</option>
+                                <option value="BAJA CALIFORNIA SUR" {% if venta_pospago.estado_republica == 'BAJA CALIFORNIA SUR' %}selected{% endif %}>BAJA CALIFORNIA SUR</option>
+                                <option value="CAMPECHE" {% if venta_pospago.estado_republica == 'CAMPECHE' %}selected{% endif %}>CAMPECHE</option>
+                                <option value="COAHUILA" {% if venta_pospago.estado_republica == 'COAHUILA' %}selected{% endif %}>COAHUILA</option>
+                                <option value="COLIMA" {% if venta_pospago.estado_republica == 'COLIMA' %}selected{% endif %}>COLIMA</option>
+                                <option value="CHIAPAS" {% if venta_pospago.estado_republica == 'CHIAPAS' %}selected{% endif %}>CHIAPAS</option>
+                                <option value="CHIHUAHUA" {% if venta_pospago.estado_republica == 'CHIHUAHUA' %}selected{% endif %}>CHIHUAHUA</option>
+                                <option value="CIUDAD DE MEXICO" {% if venta_pospago.estado_republica == 'CIUDAD DE MEXICO' %}selected{% endif %}>CIUDAD DE MÉXICO</option>
+                                <option value="DURANGO" {% if venta_pospago.estado_republica == 'DURANGO' %}selected{% endif %}>DURANGO</option>
+                                <option value="GUANAJUATO" {% if venta_pospago.estado_republica == 'GUANAJUATO' %}selected{% endif %}>GUANAJUATO</option>
+                                <option value="GUERRERO" {% if venta_pospago.estado_republica == 'GUERRERO' %}selected{% endif %}>GUERRERO</option>
+                                <option value="HIDALGO" {% if venta_pospago.estado_republica == 'HIDALGO' %}selected{% endif %}>HIDALGO</option>
+                                <option value="JALISCO" {% if venta_pospago.estado_republica == 'JALISCO' %}selected{% endif %}>JALISCO</option>
+                                <option value="MEXICO" {% if venta_pospago.estado_republica == 'MEXICO' %}selected{% endif %}>MÉXICO</option>
+                                <option value="MICHOACAN" {% if venta_pospago.estado_republica == 'MICHOACAN' %}selected{% endif %}>MICHOACAN</option>
+                                <option value="MORELOS" {% if venta_pospago.estado_republica == 'MORELOS' %}selected{% endif %}>MORELOS</option>
+                                <option value="NAYARIT" {% if venta_pospago.estado_republica == 'NAYARIT' %}selected{% endif %}>NAYARIT</option>
+                                <option value="NUEVO LEON" {% if venta_pospago.estado_republica == 'NUEVO LEON' %}selected{% endif %}>NUEVO LEÓN</option>
+                                <option value="OAXACA" {% if venta_pospago.estado_republica == 'OAXACA' %}selected{% endif %}>OAXACA</option>
+                                <option value="PUEBLA" {% if venta_pospago.estado_republica == 'PUEBLA' %}selected{% endif %}>PUEBLA</option>
+                                <option value="QUERETARO" {% if venta_pospago.estado_republica == 'QUERETARO' %}selected{% endif %}>QUERÉTARO</option>
+                                <option value="QUINTANA ROO" {% if venta_pospago.estado_republica == 'QUINTANA ROO' %}selected{% endif %}>QUINTANA ROO</option>
+                                <option value="SAN LUIS POTOSI" {% if venta_pospago.estado_republica == 'SAN LUIS POTOSI' %}selected{% endif %}>SAN LUIS POTOSÍ</option>
+                                <option value="SINALOA" {% if venta_pospago.estado_republica == 'SINALOA' %}selected{% endif %}>SINALOA</option>
+                                <option value="SONORA" {% if venta_pospago.estado_republica == 'SONORA' %}selected{% endif %}>SONORA</option>
+                                <option value="TABASCO" {% if venta_pospago.estado_republica == 'TABASCO' %}selected{% endif %}>TABASCO</option>
+                                <option value="TAMAULIPAS" {% if venta_pospago.estado_republica == 'TAMAULIPAS' %}selected{% endif %}>TAMAULIPAS</option>
+                                <option value="TLAXCALA" {% if venta_pospago.estado_republica == 'TLAXCALA' %}selected{% endif %}>TLAXCALA</option>
+                                <option value="VERACRUZ" {% if venta_pospago.estado_republica == 'VERACRUZ' %}selected{% endif %}>VERACRUZ</option>
+                                <option value="YUCATAN" {% if venta_pospago.estado_republica == 'YUCATAN' %}selected{% endif %}>YUCATÁN</option>
+                                <option value="ZACATECAS" {% if venta_pospago.estado_republica == 'ZACATECAS' %}selected{% endif %}>ZACATECAS</option>
+                            </select>
+                        </div>
+                                                
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">MUNICIPIO / ALCALDÍA</label>
+                            <input type="text" name="municipio" class="form-control" value="{{ venta_pospago.municipio }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                      
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">COLONIA</label>
+                            <input type="text" name="colonia" class="form-control" value="{{ venta_pospago.colonia }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CALLE</label>
+                            <input type="text" name="calle" class="form-control" value="{{ venta_pospago.calle }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                      
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">NÚMERO EXTERIOR</label>
+                            <input type="text" name="numero_exterior" class="form-control" value="{{ venta_pospago.numero_exterior }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">NÚMERO INTERIOR</label>
+                            <input type="text" name="numero_interior" class="form-control" value="{{ venta_pospago.numero_interior }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">CAC</label>
+                            <input type="text" name="cac" class="form-control" value="{{ venta_pospago.cac }}"
+                                style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        {% if es_supervisor %}
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">STATUS</label>
+                            <select name="status_pospago" class="form-control" required>
+                                <option value="en_proceso" {% if venta_pospago.status_pospago == 'en_proceso' or not venta_pospago.status_pospago %}selected{% endif %}>EN PROCESO</option>
+                                <option value="rechazo_nip" {% if venta_pospago.status_pospago == 'rechazo_nip' %}selected{% endif %}>RECHAZO NIP</option>
+                                <option value="rechazo_magento" {% if venta_pospago.status_pospago == 'rechazo_magento' %}selected{% endif %}>RECHAZO MAGENTO</option>
+                                <option value="black_list" {% if venta_pospago.status_pospago == 'black_list' %}selected{% endif %}>BLACK LIST</option>
+                                <option value="datos_incorrectos" {% if venta_pospago.status_pospago == 'datos_incorrectos' %}selected{% endif %}>DATOS INCORRECTOS</option>
+                                <option value="exitosa" {% if venta_pospago.status_pospago == 'exitosa' %}selected{% endif %}>EXITOSA</option>
+                                <option value="linea_movistar" {% if venta_pospago.status_pospago == 'linea_movistar' %}selected{% endif %}>LINEA MOVISTAR</option>
+                                <option value="gestionada_por_otro_call_center" {% if venta_pospago.status_pospago == 'gestionada_por_otro_call_center' %}selected{% endif %}>GESTIONADA POR OTRO CALL CENTER</option>
+                                <option value="alta" {% if venta_pospago.status_pospago == 'alta' %}selected{% endif %}>ALTA</option>
+                                <option value="cancelacion" {% if venta_pospago.status_pospago == 'cancelacion' %}selected{% endif %}>CANCELACIÓN</option>
+                            </select>
+                        </div>
+                        {% endif %}
+          </div>
+          <!-- Termina seccion de campos de venta en 3 columns -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button form="form_update_venta_pospago{{ venta_pospago.id }}" type="submit" class="btn btn-primary">Guardar Pospago</button>
+      </div>
+    </div>
+  </div>
+</div>

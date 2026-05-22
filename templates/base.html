@@ -28,9 +28,6 @@
                   <li>
                     <a class="dropdown-item" href="{% url 'pospago' %}"><i class="bi bi-person-bounding-box me-1"></i>Pospago</a>
                   </li>
-                  <li>
-                    <a class="dropdown-item" href="{% url 'tarjetas' %}"><i class="bi bi-credit-card-2-front me-1"></i>TDC</a>
-                  </li>
                 </ul>
               </div>
             </li>
@@ -43,7 +40,7 @@
                 <button class="btn btn-light text-dark ms-3" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle me-1"></i> <strong>{{ user.first_name }}</strong></button>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
                   <li>
-                    {% if es_superior %}
+                    {% if es_superior or es_supervisor %}
                       <a class="dropdown-item" href="?rol=vendedor"><i class="bi bi-person me-2"></i>Vendedor</a>
                       <a class="dropdown-item" href="?rol=superior"><i class="bi bi-person-badge me-2"></i>Superior</a>
 

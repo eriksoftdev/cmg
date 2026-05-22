@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from .forms import VentaPrepagoForm
 from .models import VentaPrepago
+from .forms_pospago import VentaPospagoForm
+from .models import VentaPospago
 from django.contrib import messages
 from django.urls import reverse
 # para ver que se no se envien los mismo registros import time
@@ -38,7 +40,6 @@ def prepago(request):
         else:
             es_vendedor = False
             pass  # El rol activo sigue siendo el de superior, no hacemos cambios
-
     else:
         # Por defecto, si no es superior, es vendedor
         request.session['rol_activo'] = 'vendedor'
@@ -81,7 +82,7 @@ def prepago(request):
             'es_vendedor': es_vendedor  # Pasamos esta bandera al HTML
         })
 
-    # Lógica POST para crear ventas (El común siempre entra aquí)
+        # Lógica POST para crear ventas (El común siempre entra aquí)
     else:
         # Evitamos que se envien los mismo registros
         form_data = request.POST.get('curp') + request.POST.get('dn')
@@ -172,10 +173,117 @@ def delete_venta_prepago(request, venta_prepago_id):
 # Agregar y mostrar ventas pospago
 @login_required
 def pospago(request):
-    return render(request, 'pospago.html')
+    es_vendedor = request.user.groups.filter(name='VENDEDORES').exists()
+    es_supervisor = request.user.is_superuser or request.user.groups.filter(
+        name='SUPERVISORES').exists()
+
+    # Definimos el rol activo  por si cambia entre supervisor a vendedor o viceversa
+    if es_supervisor:
+        if request.GET.get('rol'):
+            request.session['rol_activo'] = request.GET.get('rol')
+
+        if request.session.get('rol_activo') == 'vendedor':
+            es_supervisor = False
+            es_vendedor = True
+        else:
+            es_vendedor = False
+            pass  # El rol activo sigue siendo el de supervisor, no hacemos cambios
+    else:
+        # Por defecto, si no es supervisor, es vendedor
+        request.session['rol_activo'] = 'vendedor'
+        es_vendedor = True
+        es_supervisor = False
+
+    if request.method == 'GET':
+        # FILTRO MAESTRO
+        if es_supervisor:
+            base_queryset = VentaPospago.objects.all()
+        else:
+            base_queryset = VentaPospago.objects.filter(user=request.user)
+
+        # Segmentación para los tabs de la interfaz
+        ventas_pospago = base_queryset.filter(
+            status_pospago='en_proceso').order_by('-created')
+
+        return render(request, 'pospago.html', {
+            'form': VentaPospagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
+            'ventas_pospago': ventas_pospago,
+            'es_supervisor': es_supervisor,  # Pasamos esta bandera al HTML
+            'es_vendedor': es_vendedor,  # Pasamos esta bandera al HTML
+            # Pasamos esta bandera al HTML para cambiar entre supervisor y vendedor
+            'es_supervisor': request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists()
+        })
+    else:
+        # Evitamos que se envien los mismo registros
+        form_data = request.POST.get('curp') + request.POST.get('dn')
+        if request.session.get('last_form') == form_data:
+            return redirect('pospago')
+
+        form = VentaPospagoForm(request.POST, user=request.user)
+        if form.is_valid():
+            new_venta = form.save(commit=False)
+            new_venta.user = request.user  # El dueño siempre es quien está logueado
+            new_venta.save()
+            request.session['last_form'] = form_data
+            messages.success(request, '¡Venta registrada!')
+        return redirect('pospago')
+
+# update venta pospago
 
 
 @login_required
-def tarjetas(request):
-    return render(request, 'tarjetas.html')
+@permission_required('ventas.change_ventapospago', raise_exception=True)
+def update_venta_pospago(request, venta_pospago_id):
+    es_supervisor = request.user.is_superuser or request.user.groups.filter(
+        name__in=['SUPERVISORES']).exists()
+    venta_pospago = get_object_or_404(VentaPospago, id=venta_pospago_id)
+    if request.method == 'POST':
+        venta_pospago.nombre = request.POST.get('nombre')
+        venta_pospago.apellido_paterno = request.POST.get('apellido_paterno')
+        venta_pospago.apellido_materno = request.POST.get('apellido_materno')
+        venta_pospago.curp = request.POST.get('curp')
+        venta_pospago.rfc = request.POST.get('rfc')
+        venta_pospago.identificacion = request.POST.get('identificacion')
+        venta_pospago.dn = request.POST.get('dn')
+        venta_pospago.nip = request.POST.get('nip')
+        venta_pospago.contact1 = request.POST.get('contact1')
+        venta_pospago.contact2 = request.POST.get('contact2')
+        venta_pospago.fvc = request.POST.get('fvc')
+        venta_pospago.email = request.POST.get('email')
+        venta_pospago.plan = request.POST.get('plan')
+        venta_pospago.cac = request.POST.get('cac')
+        venta_pospago.cp = request.POST.get('cp')
+        venta_pospago.fecha_nacimiento = request.POST.get('fecha_nacimiento')
+        venta_pospago.estado_republica = request.POST.get('estado_republica')
+        venta_pospago.municipio = request.POST.get('municipio')
+        venta_pospago.colonia = request.POST.get('colonia')
+        venta_pospago.calle = request.POST.get('calle')
+        venta_pospago.numero_exterior = request.POST.get('numero_exterior')
+        venta_pospago.numero_interior = request.POST.get('numero_interior')
+
+        if 'status_pospago' in request.POST:
+            if request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists():
+                if venta_pospago.status_pospago == 'en_proceso' or request.user.is_superuser:
+                    venta_pospago.status_pospago = request.POST.get(
+                        'status_pospago')
+                else:
+                    messages.error(
+                        request, 'No se puede modificar el status de la venta')
+
+        venta_pospago.save()
+        tab = request.GET.get('tab', 'ventas')
+        messages.success(request, '¡Venta pospago actualizada correctamente!')
+        return redirect(f"{reverse('pospago')}?tab={tab}")
+    return redirect('pospago')
+# delete venta pospago
+
+
+@login_required
+@permission_required('ventas.delete_ventapospago', raise_exception=True)
+def delete_venta_pospago(request, venta_pospago_id):
+    venta_pospago = get_object_or_404(VentaPospago, id=venta_pospago_id)
+    venta_pospago.delete()
+    messages.success(request, '¡Venta pospago eliminada!')
+    tab = request.GET.get('tab', 'ventas')
+    return redirect(f"{reverse('pospago')}?tab={tab}")
 # endregion
