@@ -106,7 +106,7 @@
               <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_prepago.contact2 }}<br>
               <hr class='my-1'>
               <i class='bi bi-envelope-fill me-1 text-primary'></i>
-              <span class='text-primary'>{{ venta_prepago.email }}</span>
+              <span class='text-primary'>{{ venta_prepago.email|truncatechars:19 }}</span>
             </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
                 </td>
                 <td>{{ venta_prepago.fvc|date:'d/m/Y' }}</td>

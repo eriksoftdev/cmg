@@ -205,13 +205,18 @@ def pospago(request):
         ventas_pospago = base_queryset.filter(
             status_pospago='en_proceso').order_by('-created')
 
+        ventas_pospago_exitosas = base_queryset.filter(
+            status_pospago='exitosa').order_by('-created'
+                                               )
+
         return render(request, 'pospago.html', {
             'form': VentaPospagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
             'ventas_pospago': ventas_pospago,
             'es_supervisor': es_supervisor,  # Pasamos esta bandera al HTML
             'es_vendedor': es_vendedor,  # Pasamos esta bandera al HTML
             # Pasamos esta bandera al HTML para cambiar entre supervisor y vendedor
-            'es_supervisor': request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists()
+            'es_supervisor': request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists(),
+            'ventas_pospago_exitosas': ventas_pospago_exitosas,
         })
     else:
         # Evitamos que se envien los mismo registros

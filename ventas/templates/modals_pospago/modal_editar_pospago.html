@@ -91,7 +91,7 @@
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label font-weight-bold">Plan</label>
+                            <label class="form-label font-weight-bold">PLAN</label>
                             <select name="plan" class="form-control" required>
                                 <option value="" disabled {% if not venta_pospago.plan %}selected{% endif %}>-- Selecciona un Plan --</option>
                                 <option value="pro_8" {% if venta_pospago.plan == 'pro_8' %}selected{% endif %}>PRO 8</option>

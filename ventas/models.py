@@ -134,16 +134,16 @@ class VentaPospago(models.Model):
         ('ZACATECAS', 'ZACATECAS'),
     ]
     estado_republica = models.CharField(
-        'ESTADO DE LA REPUBLICA',
+        'ESTADO DE LA REPÚBLICA',
         max_length=20,
         choices=estado_republica_choices,
     )
-    municipio = models.CharField('MUNICIPIO', max_length=100)
+    municipio = models.CharField('MUNICIPIO / ALCALDÍA', max_length=100)
     colonia = models.CharField('COLONIA', max_length=100)
     calle = models.CharField('CALLE', max_length=100)
-    numero_exterior = models.CharField('NUMERO EXTERIOR', max_length=20)
+    numero_exterior = models.CharField('NÚMERO EXTERIOR', max_length=20)
     numero_interior = models.CharField(
-        'NUMERO INTERIOR', max_length=20, blank=True, default=''
+        'NÚMERO INTERIOR', max_length=20, blank=True, default=''
     )
     fvc = models.DateField('FVC')
     email = models.EmailField('EMAIL', max_length=254)

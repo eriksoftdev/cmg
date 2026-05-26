@@ -107,7 +107,7 @@ class VentaPospagoForm(ModelForm):
     )
 
     identificacion = forms.CharField(
-        label='IDENTIFICACION',
+        label='IDENTIFICACIÓN',
         min_length=15,
         max_length=15,
         validators=[RegexValidator(
@@ -142,7 +142,7 @@ class VentaPospagoForm(ModelForm):
     class Meta:
         model = VentaPospago
         fields = ['nombre', 'apellido_paterno',
-                  'apellido_materno', 'curp', 'fecha_nacimiento', 'rfc', 'identificacion',  'dn', 'fvc', 'nip', 'contact1', 'contact2', 'plan', 'email', 'cp', 'estado_republica',
+                  'apellido_materno', 'curp', 'fecha_nacimiento', 'rfc', 'identificacion',  'dn', 'nip', 'fvc', 'contact1', 'contact2', 'plan', 'email', 'cp', 'estado_republica',
                   'municipio', 'colonia', 'calle', 'numero_exterior', 'numero_interior', 'cac', 'status_pospago']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'style': 'text-transform: uppercase;', 'oninput': 'this.value = this.value.toUpperCase()'},),

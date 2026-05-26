@@ -82,116 +82,35 @@
           </thead>
           <tbody>
             {% for venta_pospago in ventas_pospago %}
-              <tr>
-                <th scope="row" class="align-middle">
-                  <div class="d-flex align-items-center">
-                    <!-- Avatar -->
-                    <div class="avatar-circle me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; border-radius: 50%; font-weight: bold; font-size: 0.8rem; flex-shrink: 0;">{{ venta_pospago.nombre|first|upper }}{{ venta_pospago.apellido_paterno|first|upper }}</div>
+              {% include 'components_pospago/tabla_ventas_pospago.html' with tab_id='ventas' %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-                    <div class="d-flex flex-column" style="line-height: 1.2;">
-                      <!-- Nombre -->
-                      <span class="text-dark fw-bold" style="font-size: 0.95rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ venta_pospago.nombre }} {{ venta_pospago.apellido_paterno }} {{ venta_pospago.apellido_materno }}">{{ venta_pospago.nombre }} {{ venta_pospago.apellido_paterno }} {{ venta_pospago.apellido_materno }}</span>
-
-                      <!-- CURP fijo + Icono Popover -->
-                      <div class="d-flex align-items-center mt-1">
-                        <small class="text-muted font-monospace" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_pospago.curp }}</small>
-
-                        <!-- Icono disparador del Popover -->
-                        <span class="ms-2 text-primary opacity-75" style="cursor: pointer; font-size: 0.8rem; line-height: 1;" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-content="
-                <div class='text-start small font-monospace' style='font-size: 0.8rem;'>
-                  <span class='text-muted'>RFC:</span> {{ venta_pospago.rfc }}<br>
-                  <hr class='my-1'>
-                  <span class='text-muted'>INE:</span> {{ venta_pospago.identificacion }}
-                </div>"><i class="bi bi-person-vcard"></i></span>
-                      </div>
-                    </div>
-                  </div>
-                </th>
-                <td>{{ venta_pospago.dn }}</td>
-                <td>{{ venta_pospago.nip }}</td>
-                <td>{{ venta_pospago.plan }}</td>
-                <td class="align-middle text-center">
-                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-content="
-              <div class='text-start small'>
-              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_pospago.contact1 }}<br>
-              <i class='bi bi-telephone-fill me-1 text-primary'></i>{{ venta_pospago.contact2 }}<br>
-              <hr class='my-1'>
-              <i class='bi bi-envelope-fill me-1 text-primary'></i>
-              <span class='text-primary text-truncate d-inline-block align-middle' title= '{{ venta_pospago.email }}' style='max-width: 200px;'>{{ venta_pospago.email }}</span>
-            </div>"><i class="bi bi-person-lines-fill text-primary"></i></button>
-                </td>
-                <td>{{ venta_pospago.fvc|date:'d/m/Y' }}</td>
-                <td>
-                  <div class="text-muted small">
-                    <i class="bi bi-person-circle me-1" style="color: #94a3b8; font-size: 0.9rem;"></i>
-                    <span class="fw-bold text-dark me-2">{{ venta_pospago.user.first_name }}</span> <br />
-                    <span style="font-size: 0.75rem;">
-                      <i class="bi bi-calendar3 me-1"></i>{{ venta_pospago.created|date:'d/m/y' }}
-                      <i class="bi bi-clock ms-1 me-1"></i>{{ venta_pospago.created|time:'g:i a' }}
-                    </span>
-                  </div>
-                </td>
-                <td class="align-middle text-center">
-                  <button type="button"
-                    class="btn btn-sm btn-light border shadow-sm rounded-pill px-3"
-                    data-bs-toggle="popover"
-                    data-bs-placement="top"
-                    data-bs-html="true"
-                    data-bs-content="
-            <div class='text-start small'>
-              <span class='text-muted'>Estado:</span> {{ venta_pospago.estado_republica }}<br>
-              <span class='text-muted'>Municipio:</span> {{ venta_pospago.municipio }}<br>
-              <span class='text-muted'>Colonia:</span> {{ venta_pospago.colonia }}<br>
-              <span class='text-muted'>CP:</span> {{ venta_pospago.cp }} <br>
-              <hr class='my-1'>
-              <i class='bi bi-house-door me-1 text-success'></i>{{ venta_pospago.calle }} #{{ venta_pospago.numero_exterior }} 
-              {% if venta_pospago.numero_interior %}
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                      
-                                        
-                          
-                      Int. {{ venta_pospago.numero_interior }}
-                    {% endif %}
-            </div>">
-                    <i class="bi bi-geo-alt text-success"></i>
-                  </button>
-                </td>
-                <td class="align-middle text-center">
-                  <button type="button" class="btn btn-sm btn-light border shadow-sm rounded-pill px-3" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="
-            <div class='d-flex align-items-start text-start text-uppercase fw-semibold text-dark' 
-                 style='font-size: 0.82rem; line-height: 1.2; max-width: 150px; word-break: break-word;'>
-              <i class='bi bi-shop text-success me-2' style='font-size: 0.9rem; margin-top: 1px;'></i>
-              <div>{{ venta_pospago.cac }}</div>
-            </div>"><i class="bi bi-shop text-success"></i></button>
-                </td>
-                <td class="text-center">
-                  <div class="btn-group" role="group">
-                    <!-- Modal y boton para editar y eliminar solo si es superior -->
-                    {% if es_supervisor %}
-                      <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal" data-bs-target="#updatePospagoModal{{ venta_pospago.id }}"><i class="bi bi-pencil-fill"></i></button>
-
-                      <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePospagoModal{{ venta_pospago.id }}"><i class="bi bi-trash3"></i></button>
-
-                      {% include 'modals_pospago/modal_editar_pospago.html' with tab_id='ventas' %}
-                      {% include 'modals_pospago/modal_eliminar_pospago.html' with tab_id='ventas' %}
-                    {% endif %}
-
-                    <!-- Termina modal y botonde editar y eliminar -->
-                  </div>
-                </td>
-              </tr>
+      <!-- Termina seccion de tab-pane de ventas -->
+      <!-- Empieza tab-pane ventas exitosas -->
+      <div class="tab-pane fade {% if active_tab == 'exitosas' %}show active{% endif %}" id="exitosas" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">PLAN</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">DIRECCIÓN</th>
+              <th scope="col">CAC</th>
+              {% if es_supervisor %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_pospago in ventas_pospago_exitosas %}
+              {% include 'components_pospago/tabla_ventas_pospago.html' with tab_id='exitosas' %}
             {% endfor %}
           </tbody>
         </table>
