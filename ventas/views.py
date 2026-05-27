@@ -208,6 +208,8 @@ def pospago(request):
         ventas_pospago_exitosas = base_queryset.filter(
             status_pospago='exitosa').order_by('-created'
                                                )
+        ventas_pospago_rechazos = base_queryset.exclude(
+            status_pospago='en_proceso').exclude(status_pospago='exitosas').order_by('-created')
 
         return render(request, 'pospago.html', {
             'form': VentaPospagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
@@ -217,6 +219,7 @@ def pospago(request):
             # Pasamos esta bandera al HTML para cambiar entre supervisor y vendedor
             'es_supervisor': request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists(),
             'ventas_pospago_exitosas': ventas_pospago_exitosas,
+            'ventas_pospago_rechazos': ventas_pospago_rechazos,
         })
     else:
         # Evitamos que se envien los mismo registros

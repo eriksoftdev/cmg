@@ -89,6 +89,7 @@
       </div>
 
       <!-- Termina seccion de tab-pane de ventas -->
+
       <!-- Empieza tab-pane ventas exitosas -->
       <div class="tab-pane fade {% if active_tab == 'exitosas' %}show active{% endif %}" id="exitosas" role="tabpanel">
         <table class="table table-hover align-middle">
@@ -116,7 +117,36 @@
         </table>
       </div>
 
-      <!-- Termina seccion de tab-pane de ventas -->
+      <!-- Termina seccion de tab-pane de ventas exitosas -->
+
+      <!-- Empieza tab-pane ventas rechazos -->
+      <div class="tab-pane fade {% if active_tab == 'rechazos' %}show active{% endif %}" id="rechazos" role="tabpanel">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col">CLIENTE</th>
+              <th scope="col">DN</th>
+              <th scope="col">NIP</th>
+              <th scope="col">PLAN</th>
+              <th scope="col">CONTACTO</th>
+              <th scope="col">FVC</th>
+              <th scope="col">VENDEDOR</th>
+              <th scope="col">DIRECCIÓN</th>
+              <th scope="col">CAC</th>
+              {% if es_supervisor %}
+                <th scope="col" class="text-center">ACCIONES</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for venta_pospago in ventas_pospago_rechazos %}
+              {% include 'components_pospago/tabla_ventas_pospago.html' with tab_id='rechazos' %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Termina seccion de tab-pane de ventas pospago rechazos -->
     </div>
   </div>
   <!-- Termina contenido de ventas en tabs -->
