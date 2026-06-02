@@ -133,8 +133,8 @@
 
                       <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
 
-                      {% include 'modals_prepago/modal_editar_prepago.html' with tab_id='ventas' %}
-                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='ventas' %}
+                      {% include 'components_prepago/modal_editar_prepago.html' with tab_id='ventas' %}
+                      {% include 'components_prepago/modal_eliminar_prepago.html' with tab_id='ventas' %}
                     {% endif %}
 
                     <!-- Termina modal y botonde editar y eliminar -->
@@ -223,8 +223,8 @@
 
                       <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
 
-                      {% include 'modals_prepago/modal_editar_prepago.html' with tab_id='validadas' %}
-                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='validadas' %}
+                      {% include 'components_prepago/modal_editar_prepago.html' with tab_id='validadas' %}
+                      {% include 'components_prepago/modal_eliminar_prepago.html' with tab_id='validadas' %}
                     {% endif %}
 
                     <!-- Termina modal y botonde editar y eliminar -->
@@ -311,7 +311,7 @@
                     {% if es_superior %}
                       <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
 
-                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='exitosas' %}
+                      {% include 'components_prepago/modal_eliminar_prepago.html' with tab_id='exitosas' %}
                     {% endif %}
 
                     <!-- Termina modal y botonde editar y eliminar -->
@@ -398,7 +398,7 @@
                     {% if es_superior %}
                       <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
 
-                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='rechazos_promo' %}
+                      {% include 'components_prepago/modal_eliminar_prepago.html' with tab_id='rechazos_promo' %}
                     {% endif %}
 
                     <!-- Termina modal y boton de editar y eliminar -->
@@ -490,7 +490,7 @@
                     {% if es_superior %}
                       <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePrepagoModal{{ venta_prepago.id }}"><i class="bi bi-trash3"></i></button>
 
-                      {% include 'modals_prepago/modal_eliminar_prepago.html' with tab_id='rechazos' %}
+                      {% include 'components_prepago/modal_eliminar_prepago.html' with tab_id='rechazos' %}
                     {% endif %}
 
                     <!-- Termina modal y botonde editar y eliminar -->

@@ -70,6 +70,7 @@
         
         
         
+        
                                         
                           
                       Int. {{ venta_pospago.numero_interior }}
@@ -93,12 +94,12 @@
         {% if tab_id != 'exitosas' and tab_id != 'rechazos' %}
           <button type="button" class="btn btn-sm btn-outline-primary" title="Editar" data-bs-toggle="modal" data-bs-target="#updatePospagoModal{{ venta_pospago.id }}"><i class="bi bi-pencil-fill"></i></button>
 
-          {% include 'modals_pospago/modal_editar_pospago.html' with tab_id=tab_id %}
+          {% include 'components_pospago/modal_editar_pospago.html' with tab_id=tab_id %}
         {% endif %}
 
         <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deletePospagoModal{{ venta_pospago.id }}"><i class="bi bi-trash3"></i></button>
 
-        {% include 'modals_pospago/modal_eliminar_pospago.html' with tab_id=tab_id %}
+        {% include 'components_pospago/modal_eliminar_pospago.html' with tab_id=tab_id %}
       {% endif %}
 
       <!-- Termina modal y botonde editar y eliminar -->
