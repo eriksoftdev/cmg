@@ -2,6 +2,7 @@
   {% if es_vendedor %}
     <div class="container mt-5">
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPospagoModal"><i class="bi bi-plus-circle-fill me-1"></i>Pospago</button>
+      <button type="button" class="btn btn-primary"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
     </div>
 
     <!-- Modal agregar pospago -->
@@ -48,15 +49,15 @@
   <div class="container mt-5 mb-5" id="moduloVentas">
     <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
       <li class="nav-item">
-        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas</button>
+        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_pospago|length }}</span></button>
       </li>
 
       <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas"><i class="bi bi-cash-coin me-1"></i> Exitosas</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas"><i class="bi bi-cash-coin me-1"></i> Exitosas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_pospago_exitosas|length }}</span></button>
       </li>
 
       <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos"><i class="bi bi-x-octagon me-1"></i> Rechazos</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos"><i class="bi bi-x-octagon me-1"></i> Rechazos<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_pospago_rechazos|length }}</span></button>
       </li>
     </ul>
 

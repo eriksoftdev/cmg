@@ -1,11 +1,15 @@
 {% extends 'base.html' %} {% block content %}
-  {% if es_vendedor %}
-    <div class="container mt-5">
+  <div class="container mt-5">
+    {% if es_vendedor %}
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPrepagoModal"><i class="bi bi-plus-circle-fill me-1"></i>Prepago</button>
-    </div>
+    {% endif %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#collapseFiltroPrepago" aria-expanded="false" aria-controls="collapseFiltroPrepago"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
+    {% include 'components_prepago/filtrar_prepago.html' %}
+    <button type="button" class="btn btn-success" onclick="location.href = window.location.search ? window.location.search + '&exportar=true' : '?exportar=true'"><i class="bi bi-file-earmark-excel me-1"></i> Exportar</button>
+  </div>
 
-    <!-- Modal agregar prepago -->
-
+  <!-- Modal agregar prepago -->
+  {% if es_vendedor %}
     <div class="modal fade" id="createPrepagoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -47,21 +51,21 @@
   <div class="container mt-5 mb-5" id="moduloVentas">
     <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
       <li class="nav-item">
-        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas</button>
+        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago|length }}</span></button>
       </li>
 
       <li class="nav-item">
-        <button class="nav-link {% if request.GET.tab == 'validadas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#validadas"><i class="bi bi-shield-check me-1"></i> Validadas</button>
+        <button class="nav-link {% if request.GET.tab == 'validadas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#validadas"><i class="bi bi-shield-check me-1"></i> Validadas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago_validadas|length }}</span></button>
       </li>
 
       <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas"><i class="bi bi-cash-coin me-1"></i> Exitosas</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exitosas"><i class="bi bi-cash-coin me-1"></i> Exitosas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago_exitosas|length }}</span></button>
       </li>
       <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos_promo"><i class="bi bi-shield-x me-1"></i> Rechazos promo</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos_promo"><i class="bi bi-shield-x me-1"></i> Rechazos promo<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago_rechazos_promo|length }}</span></button>
       </li>
       <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos"><i class="bi bi-x-octagon me-1"></i> Rechazos</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rechazos"><i class="bi bi-x-octagon me-1"></i> Rechazos<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago_rechazos|length }}</span></button>
       </li>
     </ul>
 

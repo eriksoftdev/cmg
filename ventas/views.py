@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from .forms import VentaPrepagoForm
-from .models import VentaPrepago
+from .models import VentaPrepago, User
 from .forms_pospago import VentaPospagoForm
 from .models import VentaPospago
 from django.contrib import messages
@@ -47,14 +47,42 @@ def prepago(request):
         es_supervisor = False
         es_supervisor = False
 
+# se muestran las ventas segun el rol y el filtro por usuario
     if request.method == 'GET':
+        ventas_prepago_usuario = request.GET.get('ventas_prepago_usuario')
         # FILTRO MAESTRO
         if es_superior:
-            base_queryset = VentaPrepago.objects.all()
+            if ventas_prepago_usuario:
+                base_queryset = VentaPrepago.objects.filter(
+                    user_id=ventas_prepago_usuario)
+            else:
+                base_queryset = VentaPrepago.objects.all()
         else:
             base_queryset = VentaPrepago.objects.filter(user=request.user)
 
-        # Segmentación para los tabs de la interfaz
+        # Para la ui de filtrar fechas
+        fecha_inicio = request.GET.get('fechaInicio')
+        fecha_fin = request.GET.get('fechaFin')
+
+        if fecha_inicio:
+            base_queryset = base_queryset.filter(
+                created__date__gte=fecha_inicio)
+
+        if fecha_fin:
+            base_queryset = base_queryset.filter(created__date__lte=fecha_fin)
+
+        filtro_dn = request.GET.get('dn', '').strip()
+        if filtro_dn:
+            base_queryset = base_queryset.filter(dn=filtro_dn)
+
+        filtro_curp = request.GET.get('curp', '').strip().upper()
+        if filtro_curp:
+            base_queryset = base_queryset.filter(curp=filtro_curp)
+
+        filtro_folio = request.GET.get('folio', '').strip().upper()
+        if filtro_folio:
+            base_queryset = base_queryset.filter(folio=filtro_folio)
+
         ventas_prepago = base_queryset.filter(
             acepta_promo=None).order_by('-created')
 
@@ -70,6 +98,26 @@ def prepago(request):
         ventas_prepago_rechazos = base_queryset.exclude(acepta_promo=None).exclude(
             status='exitosa').exclude(status='en_proceso').order_by('-created')
 
+        # exportar a csv
+
+        if request.GET.get('exportar') == 'true':
+            import csv
+            from django.http import HttpResponse
+
+            response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+            response['Content-Disposition'] = 'attachment; filename="ventas_prepago.csv"'
+
+            writer = csv.writer(response)
+
+            writer.writerow(['CLIENTE', 'CURP', 'DN', 'NIP',
+                            'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'VICIDIAL', 'FOLIO', 'USUARIO MARCADOR', 'CREADO'])
+            for venta_prepago in base_queryset.order_by('-created'):
+                cliente = f"{venta_prepago.nombre} {venta_prepago.apellido_paterno} {venta_prepago.apellido_materno}".strip()
+                writer.writerow([cliente, venta_prepago.curp,
+                                venta_prepago.dn, venta_prepago.nip, venta_prepago.contact1,
+                                venta_prepago.contact2, venta_prepago.email, venta_prepago.fvc.strftime('%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.marcador, venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S')])
+            return response
+
         return render(request, 'prepago.html', {
             'form': VentaPrepagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
             'ventas_prepago': ventas_prepago,
@@ -79,7 +127,16 @@ def prepago(request):
             'ventas_prepago_rechazos': ventas_prepago_rechazos,
             'es_superior': es_superior,  # Pasamos esta bandera al HTML
             'es_supervisor': es_supervisor,  # Pasamos esta bandera al HTML
-            'es_vendedor': es_vendedor  # Pasamos esta bandera al HTML
+            'es_vendedor': es_vendedor,  # Pasamos esta bandera al HTML
+            'fecha_inicio': fecha_inicio,  # Para mantener el filtro en la interfaz
+            'fecha_fin': fecha_fin,  # Para mantener el filtro en la interfaz
+            # para obtener los users del sistema importando User del model
+            'usuarios': User.objects.filter(is_active=True).order_by('username'),
+            # Para mantener el filtro en la interfaz
+            'ventas_prepago_usuario': ventas_prepago_usuario,
+            'filtro_dn': filtro_dn,
+            'filtro_curp': filtro_curp,
+            'filtro_folio': filtro_folio,
         })
 
         # Lógica POST para crear ventas (El común siempre entra aquí)
@@ -98,6 +155,7 @@ def prepago(request):
             request.session['last_form'] = form_data
             messages.success(request, '¡Venta registrada!')
         return redirect('prepago')
+
 
 # update venta prepago
 
@@ -166,6 +224,7 @@ def delete_venta_prepago(request, venta_prepago_id):
     messages.success(request, '¡Venta prepago eliminada!')
     tab = request.GET.get('tab', 'ventas')
     return redirect(f"{reverse('prepago')}?tab={tab}")
+
 # endregion
 
 
