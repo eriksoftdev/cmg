@@ -1,12 +1,15 @@
 {% extends 'base.html' %} {% block content %}
-  {% if es_vendedor %}
-    <div class="container mt-5">
+  <div class="container mt-5">
+    {% if es_vendedor %}
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPospagoModal"><i class="bi bi-plus-circle-fill me-1"></i>Pospago</button>
-      <button type="button" class="btn btn-primary"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
-    </div>
+    {% endif %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#collapseFiltroPospago" aria-expanded="false" aria-controls="collapseFiltroPospago"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
+    {% include 'components_pospago/filtrar_pospago.html' %}
+    <button type="button" class="btn btn-success" onclick="location.href = window.location.search ? window.location.search + '&exportar=true' : '?exportar=true'"><i class="bi bi-file-earmark-excel me-1"></i> Exportar</button>
+  </div>
 
-    <!-- Modal agregar pospago -->
-
+  <!-- Modal agregar pospago -->
+  {% if es_vendedor %}
     <div class="modal fade" id="createPospagoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">

@@ -83,6 +83,11 @@ def prepago(request):
         if filtro_folio:
             base_queryset = base_queryset.filter(folio=filtro_folio)
 
+        if ventas_prepago_usuario:
+            base_queryset = base_queryset.filter(
+                user_id=ventas_prepago_usuario)
+
+        # Segmentación para los tabs de la interfaz
         ventas_prepago = base_queryset.filter(
             acepta_promo=None).order_by('-created')
 
@@ -110,12 +115,12 @@ def prepago(request):
             writer = csv.writer(response)
 
             writer.writerow(['CLIENTE', 'CURP', 'DN', 'NIP',
-                            'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'VICIDIAL', 'FOLIO', 'USUARIO MARCADOR', 'CREADO'])
+                            'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'VICIDIAL', 'FOLIO', 'USUARIO MARCADOR', 'STATUS', 'CREADO'])
             for venta_prepago in base_queryset.order_by('-created'):
                 cliente = f"{venta_prepago.nombre} {venta_prepago.apellido_paterno} {venta_prepago.apellido_materno}".strip()
                 writer.writerow([cliente, venta_prepago.curp,
                                 venta_prepago.dn, venta_prepago.nip, venta_prepago.contact1,
-                                venta_prepago.contact2, venta_prepago.email, venta_prepago.fvc.strftime('%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.marcador, venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S')])
+                                venta_prepago.contact2, venta_prepago.email, venta_prepago.fvc.strftime('%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.marcador, venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.get_status_display(), venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S')])
             return response
 
         return render(request, 'prepago.html', {
@@ -254,11 +259,34 @@ def pospago(request):
         es_supervisor = False
 
     if request.method == 'GET':
+        ventas_pospago_usuario = request.GET.get('ventas_pospago_usuario')
         # FILTRO MAESTRO
         if es_supervisor:
             base_queryset = VentaPospago.objects.all()
         else:
             base_queryset = VentaPospago.objects.filter(user=request.user)
+        # Para la ui de filtrar fechas en pospago
+        fecha_inicio = request.GET.get('fechaInicio')
+        fecha_fin = request.GET.get('fechaFin')
+
+        if fecha_inicio and fecha_fin:
+            base_queryset = base_queryset.filter(
+                created__date__gte=fecha_inicio)
+
+        if fecha_fin:
+            base_queryset = base_queryset.filter(created__date__lte=fecha_fin)
+
+        filtro_dn = request.GET.get('dn', '').strip()
+        if filtro_dn:
+            base_queryset = base_queryset.filter(dn=filtro_dn)
+
+        filtro_curp = request.GET.get('curp', '').strip().upper()
+        if filtro_curp:
+            base_queryset = base_queryset.filter(curp=filtro_curp)
+
+        if ventas_pospago_usuario:
+            base_queryset = base_queryset.filter(
+                user_id=ventas_pospago_usuario)
 
         # Segmentación para los tabs de la interfaz
         ventas_pospago = base_queryset.filter(
@@ -270,6 +298,34 @@ def pospago(request):
         ventas_pospago_rechazos = base_queryset.exclude(
             status_pospago='en_proceso').exclude(status_pospago='exitosas').order_by('-created')
 
+        # exportar pospago a csv
+        if request.GET.get('exportar') == 'true':
+            import csv
+            from django.http import HttpResponse
+
+            response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+            response['Content-Disposition'] = 'attachment; filename="ventas_pospago.csv"'
+
+            writer = csv.writer(response)
+
+            writer.writerow(['CLIENTE', 'FECHA DE NACIMIENTO', 'CURP', 'RFC',
+                            'IDENTIFICACIÓN', 'DN', 'NIP', 'PLAN', 'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'CP', 'ESTADO', 'MUNICIPIO',
+                             'COLONIA', 'CALLE', 'NUMERO EXTERIOR', 'NUMERO INTERIOR', 'STATUS', 'CREADO'])
+
+            for venta_pospago in base_queryset.order_by('-created'):
+                cliente = f"{venta_pospago.nombre} {venta_pospago.apellido_paterno} {venta_pospago.apellido_materno}".strip()
+                writer.writerow(
+                    [cliente, venta_pospago.fecha_nacimiento.strftime('%d-%m-%Y'), venta_pospago.curp, venta_pospago.rfc,
+                     venta_pospago.identificacion, venta_pospago.dn, venta_pospago.nip, venta_pospago.get_plan_display(
+                    ), venta_pospago.contact1,
+                        venta_pospago.contact2, venta_pospago.email, venta_pospago.fvc.strftime(
+                         '%d-%m-%Y'), venta_pospago.user.get_full_name(),
+                        venta_pospago.cp, venta_pospago.estado_republica, venta_pospago.municipio,
+                        venta_pospago.colonia, venta_pospago.calle, venta_pospago.numero_exterior, venta_pospago.numero_interior,
+                        venta_pospago.get_status_pospago_display(), venta_pospago.created.strftime('%d-%m-%Y %H:%M:%S')])
+
+            return response
+
         return render(request, 'pospago.html', {
             'form': VentaPospagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
             'ventas_pospago': ventas_pospago,
@@ -279,6 +335,12 @@ def pospago(request):
             'es_supervisor': request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists(),
             'ventas_pospago_exitosas': ventas_pospago_exitosas,
             'ventas_pospago_rechazos': ventas_pospago_rechazos,
+            'fecha_inicio': fecha_inicio,  # Para mantener el filtro en la interfaz
+            'fecha_fin': fecha_fin,  # Para mantener el filtro en la interfaz
+            'filtro_dn': filtro_dn,
+            'filtro_curp': filtro_curp,
+            'ventas_pospago_usuario': ventas_pospago_usuario,
+            'usuarios': User.objects.filter(is_active=True).order_by('username'),
         })
     else:
         # Evitamos que se envien los mismo registros

@@ -10,15 +10,14 @@
 
         <!-- CURP fijo + Icono Popover -->
         <div class="d-flex align-items-center mt-1">
-          <small class="text-muted font-monospace" style="font-size: 0.75rem; letter-spacing: 0.5px; white-space: nowrap;"><i class="bi bi-card-text me-1"></i>{{ venta_pospago.curp }}</small>
-
+          <small class="text-muted font-monospace" style="font-size: 0.75rem; letter-spacing: 0.5px;"><i class="bi bi-card-text me-1"></i>{{ venta_pospago.curp }}</small>
           <!-- Icono disparador del Popover -->
-          <span class="ms-2 text-primary opacity-75" style="cursor: pointer; font-size: 0.8rem; line-height: 1;" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-content="
-                <div class='text-start small font-monospace' style='font-size: 0.8rem;'>
-                  <span class='text-muted'>RFC:</span> {{ venta_pospago.rfc }}<br>
-                  <hr class='my-1'>
-                  <span class='text-muted'>INE:</span> {{ venta_pospago.identificacion }}
-                </div>"><i class="bi bi-person-vcard"></i></span>
+          <span class="ms-2 text-primary opacity-75" style="cursor: pointer; font-size: 0.85rem;" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-content="
+          <div class='font-monospace text-start' style='font-size: 0.78rem; line-height: 1.5; padding: 2px;'>
+            <div class='mb-1'><strong class='text-muted'>RFC:</strong> {{ venta_pospago.rfc }}</div>
+            <div class='mb-1'><strong class='text-muted'>INE:</strong> {{ venta_pospago.identificacion }}</div>
+            <div><strong class='text-muted'>F. NAC:</strong> {{ venta_pospago.fecha_nacimiento|date:'d/m/Y' }}</div>
+          </div>"><i class="bi bi-person-vcard"></i></span>
         </div>
       </div>
     </div>
@@ -62,6 +61,14 @@
               <hr class='my-1'>
               <i class='bi bi-house-door me-1 text-success'></i>{{ venta_pospago.calle }} #{{ venta_pospago.numero_exterior }} 
               {% if venta_pospago.numero_interior %}
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         

@@ -1,0 +1,53 @@
+<div class="collapse mt-3" id="collapseFiltroPospago">
+  <div class="card card-body bg-light border-0 shadow-sm">
+    <!-- 1. Agregamos method="GET" y action="" -->
+    <form id="formFiltroPospago" class="row g-3 align-items-end" method="GET" action="">
+      <!-- 2. TRUCO DEL TAB: Un input invisible que le dice a Django en qué pestaña estás -->
+      <input type="hidden" id="filterTabInput" name="tab" value="{{ request.GET.tab|default:'ventas' }}" />
+
+      <!-- Fecha Inicio -->
+      <div class="col-md-4">
+        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+        <!-- 3. Agregamos value para que la fecha se quede pintada al recargar -->
+        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="{{ fecha_inicio|default:'' }}" />
+      </div>
+
+      <!-- Fecha Final -->
+      <div class="col-md-4">
+        <label for="fechaFin" class="form-label">Fecha Final</label>
+        <!-- 3. Agregamos value para que la fecha se quede pintada al recargar -->
+        <input type="date" class="form-control" id="fechaFin" name="fechaFin" value="{{ fecha_fin|default:'' }}" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">DN</label>
+        <input type="text" name="dn" class="form-control" value="{{ venta_pospago.dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">CURP</label>
+        <input type="text" name="curp" class="form-control" value="{{ venta_pospago.curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+      </div>
+
+      <div class="col-md-4">
+        <label for="ventas_pospago_usuario" class="form-label">Usuario</label>
+        <select class="form-select" id="ventas_pospago_usuario" name="ventas_pospago_usuario">
+          <option value="">SELECCIONAR USUARIO</option>
+          {% for u in usuarios %}
+            {% if u.id|slugify == ventas_pospago_usuario %}
+              <option value="{{ u.id }}" selected>{{ u.get_full_name|default:u.username }}</option>
+            {% else %}
+              <option value="{{ u.id }}">{{ u.get_full_name|default:u.username|upper }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+       <!-- Acciones -->
+      <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
+        <a href="?tab={{ request.GET.tab|default:'ventas' }}" class="btn btn-outline-secondary px-4">Limpiar</a>
+        <button type="submit" class="btn btn-primary px-4">Filtrar</button>
+      </div>
+    </form>
+  </div>
+</div>
