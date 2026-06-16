@@ -32,33 +32,32 @@ def prepago(request):
     # Definimos el rol activo  por si cambia entre superior a vendedor o viceversa
     if es_superior:
         if request.GET.get('rol'):
-            request.session['rol_activo'] = request.GET.get('rol')
+            request.session['rol_activo_prepago'] = request.GET.get('rol')
 
-        if request.session.get('rol_activo') == 'vendedor':
-            es_supervisor = False
+        if request.session.get('rol_activo_prepago') == 'vendedor':
             es_vendedor = True
         else:
             es_vendedor = False
             pass  # El rol activo sigue siendo el de superior, no hacemos cambios
     else:
         # Por defecto, si no es superior, es vendedor
-        request.session['rol_activo'] = 'vendedor'
+        request.session['rol_activo_prepago'] = 'vendedor'
         es_vendedor = True
-        es_supervisor = False
-        es_supervisor = False
+        es_superior = False
 
 # se muestran las ventas segun el rol y el filtro por usuario
     if request.method == 'GET':
         ventas_prepago_usuario = request.GET.get('ventas_prepago_usuario')
         # FILTRO MAESTRO
-        if es_superior:
+        if request.session.get('rol_activo_prepago') == 'vendedor':
+            base_queryset = VentaPrepago.objects.filter(
+                user=request.user)
+        else:
             if ventas_prepago_usuario:
                 base_queryset = VentaPrepago.objects.filter(
                     user_id=ventas_prepago_usuario)
             else:
                 base_queryset = VentaPrepago.objects.all()
-        else:
-            base_queryset = VentaPrepago.objects.filter(user=request.user)
 
         # Para la ui de filtrar fechas
         fecha_inicio = request.GET.get('fechaInicio')
@@ -82,10 +81,6 @@ def prepago(request):
         filtro_folio = request.GET.get('folio', '').strip().upper()
         if filtro_folio:
             base_queryset = base_queryset.filter(folio=filtro_folio)
-
-        if ventas_prepago_usuario:
-            base_queryset = base_queryset.filter(
-                user_id=ventas_prepago_usuario)
 
         # Segmentación para los tabs de la interfaz
         ventas_prepago = base_queryset.filter(
@@ -120,11 +115,14 @@ def prepago(request):
                 cliente = f"{venta_prepago.nombre} {venta_prepago.apellido_paterno} {venta_prepago.apellido_materno}".strip()
                 writer.writerow([cliente, venta_prepago.curp,
                                 venta_prepago.dn, venta_prepago.nip, venta_prepago.contact1,
-                                venta_prepago.contact2, venta_prepago.email, venta_prepago.fvc.strftime('%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.marcador, venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.get_status_display(), venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S')])
+                                venta_prepago.contact2, venta_prepago.email,
+                                venta_prepago.fvc.strftime(
+                                    '%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.marcador,
+                                venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.get_status_display(), venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S')])
             return response
 
         return render(request, 'prepago.html', {
-            'form': VentaPrepagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
+            'form': VentaPrepagoForm(user=request.user, rol_activo=request.session.get('rol_activo_prepago')),
             'ventas_prepago': ventas_prepago,
             'ventas_prepago_validadas': ventas_prepago_validadas,
             'ventas_prepago_exitosas': ventas_prepago_exitosas,
@@ -151,7 +149,8 @@ def prepago(request):
         if request.session.get('last_form') == form_data:
             return redirect('prepago')
 
-        form = VentaPrepagoForm(request.POST, user=request.user)
+        form = VentaPrepagoForm(
+            request.POST, user=request.user, rol_activo=request.session.get('rol_activo_prepago'))
         if form.is_valid():
             new_venta = form.save(commit=False)
             new_venta.user = request.user  # El dueño siempre es quien está logueado
@@ -244,27 +243,30 @@ def pospago(request):
     # Definimos el rol activo  por si cambia entre supervisor a vendedor o viceversa
     if es_supervisor:
         if request.GET.get('rol'):
-            request.session['rol_activo'] = request.GET.get('rol')
+            request.session['rol_activo_pospago'] = request.GET.get('rol')
 
-        if request.session.get('rol_activo') == 'vendedor':
-            es_supervisor = False
+        if request.session.get('rol_activo_pospago') == 'vendedor':
             es_vendedor = True
         else:
             es_vendedor = False
             pass  # El rol activo sigue siendo el de supervisor, no hacemos cambios
     else:
         # Por defecto, si no es supervisor, es vendedor
-        request.session['rol_activo'] = 'vendedor'
+        request.session['rol_activo_pospago'] = 'vendedor'
         es_vendedor = True
         es_supervisor = False
 
     if request.method == 'GET':
         ventas_pospago_usuario = request.GET.get('ventas_pospago_usuario')
         # FILTRO MAESTRO
-        if es_supervisor:
-            base_queryset = VentaPospago.objects.all()
-        else:
+        if request.session.get('rol_activo_pospago') == 'vendedor':
             base_queryset = VentaPospago.objects.filter(user=request.user)
+        else:
+            if ventas_pospago_usuario:
+                base_queryset = VentaPospago.objects.filter(
+                    user_id=ventas_pospago_usuario)
+            else:
+                base_queryset = VentaPospago.objects.all()
         # Para la ui de filtrar fechas en pospago
         fecha_inicio = request.GET.get('fechaInicio')
         fecha_fin = request.GET.get('fechaFin')
@@ -284,10 +286,6 @@ def pospago(request):
         if filtro_curp:
             base_queryset = base_queryset.filter(curp=filtro_curp)
 
-        if ventas_pospago_usuario:
-            base_queryset = base_queryset.filter(
-                user_id=ventas_pospago_usuario)
-
         # Segmentación para los tabs de la interfaz
         ventas_pospago = base_queryset.filter(
             status_pospago='en_proceso').order_by('-created')
@@ -296,7 +294,7 @@ def pospago(request):
             status_pospago='exitosa').order_by('-created'
                                                )
         ventas_pospago_rechazos = base_queryset.exclude(
-            status_pospago='en_proceso').exclude(status_pospago='exitosas').order_by('-created')
+            status_pospago='en_proceso').exclude(status_pospago='exitosa').order_by('-created')
 
         # exportar pospago a csv
         if request.GET.get('exportar') == 'true':
@@ -327,12 +325,10 @@ def pospago(request):
             return response
 
         return render(request, 'pospago.html', {
-            'form': VentaPospagoForm(user=request.user, rol_activo=request.session.get('rol_activo')),
+            'form': VentaPospagoForm(user=request.user, rol_activo=request.session.get('rol_activo_pospago')),
             'ventas_pospago': ventas_pospago,
             'es_supervisor': es_supervisor,  # Pasamos esta bandera al HTML
             'es_vendedor': es_vendedor,  # Pasamos esta bandera al HTML
-            # Pasamos esta bandera al HTML para cambiar entre supervisor y vendedor
-            'es_supervisor': request.user.is_superuser or request.user.groups.filter(name='SUPERVISORES').exists(),
             'ventas_pospago_exitosas': ventas_pospago_exitosas,
             'ventas_pospago_rechazos': ventas_pospago_rechazos,
             'fecha_inicio': fecha_inicio,  # Para mantener el filtro en la interfaz
@@ -348,7 +344,8 @@ def pospago(request):
         if request.session.get('last_form') == form_data:
             return redirect('pospago')
 
-        form = VentaPospagoForm(request.POST, user=request.user)
+        form = VentaPospagoForm(
+            request.POST, user=request.user, rol_activo=request.session.get('rol_activo_pospago'))
         if form.is_valid():
             new_venta = form.save(commit=False)
             new_venta.user = request.user  # El dueño siempre es quien está logueado

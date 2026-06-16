@@ -20,6 +20,21 @@
       </div>
 
       <div class="col-md-4">
+        <label class="form-label font-weight-bold">DN</label>
+        <input type="text" name="dn" class="form-control" value="{{ filtro_dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">CURP</label>
+          <input type="text" name="curp" class="form-control" value="{{ filtro_curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">FOLIO</label>
+        <input type="text" name="folio" class="form-control" value="{{ filtro_folio }}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+      </div>
+      {% if es_superior or es_supervisor%}
+      <div class="col-md-4">
         <label for="ventas_prepago_usuario" class="form-label">Usuario</label>
         <select class="form-select" id="ventas_prepago_usuario" name="ventas_prepago_usuario">
           <option value="">SELECCIONAR USUARIO</option>
@@ -32,22 +47,7 @@
           {% endfor %}
         </select>
       </div>
-
-      <div class="col-md-4">
-        <label class="form-label font-weight-bold">DN</label>
-        <input type="text" name="dn" class="form-control" value="{{ venta_prepago.dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label font-weight-bold">CURP</label>
-          <input type="text" name="curp" class="form-control" value="{{ venta_prepago.curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label font-weight-bold">FOLIO</label>
-        <input type="text" name="folio" class="form-control" value="{{ venta_prepago.folio }}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-      </div>
-
+      {% endif %}
       <!-- Acciones -->
       <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
         <a href="?tab={{ request.GET.tab|default:'ventas' }}" class="btn btn-outline-secondary px-4">Limpiar</a>

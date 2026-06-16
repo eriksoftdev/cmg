@@ -78,6 +78,9 @@
         
         
         
+        
+        
+        
                                         
                           
                       Int. {{ venta_pospago.numero_interior }}
@@ -94,6 +97,11 @@
               <div>{{ venta_pospago.cac }}</div>
             </div>"><i class="bi bi-shop text-success"></i></button>
   </td>
+  {% if tab_id == 'rechazos' %}
+    <td title="{{ venta_pospago.get_status_pospago_display }}">
+      <small>{{ venta_pospago.get_status_pospago_display|truncatechars:14 }}</small>
+    </td>
+  {% endif %}
   <td class="text-center">
     <div class="btn-group" role="group">
       <!-- Modal y boton para editar y eliminar solo si es superior -->

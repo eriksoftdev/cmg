@@ -29,6 +29,7 @@
         <input type="text" name="curp" class="form-control" value="{{ venta_pospago.curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
       </div>
 
+      {% if es_superior or es_supervisor %}
       <div class="col-md-4">
         <label for="ventas_pospago_usuario" class="form-label">Usuario</label>
         <select class="form-select" id="ventas_pospago_usuario" name="ventas_pospago_usuario">
@@ -42,7 +43,7 @@
           {% endfor %}
         </select>
       </div>
-
+      {% endif %}
        <!-- Acciones -->
       <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
         <a href="?tab={{ request.GET.tab|default:'ventas' }}" class="btn btn-outline-secondary px-4">Limpiar</a>

@@ -5,7 +5,9 @@
     {% endif %}
     <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#collapseFiltroPrepago" aria-expanded="false" aria-controls="collapseFiltroPrepago"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
     {% include 'components_prepago/filtrar_prepago.html' %}
-    <button type="button" class="btn btn-success" onclick="location.href = window.location.search ? window.location.search + '&exportar=true' : '?exportar=true'"><i class="bi bi-file-earmark-excel me-1"></i> Exportar</button>
+    {% if es_supervisor %}
+      <button type="button" class="btn btn-success" onclick="location.href = window.location.search ? window.location.search + '&exportar=true' : '?exportar=true'"><i class="bi bi-file-earmark-excel me-1"></i> Exportar</button>
+    {% endif %}
   </div>
 
   <!-- Modal agregar prepago -->

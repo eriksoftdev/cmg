@@ -5,7 +5,9 @@
     {% endif %}
     <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#collapseFiltroPospago" aria-expanded="false" aria-controls="collapseFiltroPospago"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
     {% include 'components_pospago/filtrar_pospago.html' %}
-    <button type="button" class="btn btn-success" onclick="location.href = window.location.search ? window.location.search + '&exportar=true' : '?exportar=true'"><i class="bi bi-file-earmark-excel me-1"></i> Exportar</button>
+    {% if es_supervisor %}
+      <button type="button" class="btn btn-success" onclick="location.href = window.location.search ? window.location.search + '&exportar=true' : '?exportar=true'"><i class="bi bi-file-earmark-excel me-1"></i> Exportar</button>
+    {% endif %}
   </div>
 
   <!-- Modal agregar pospago -->
@@ -137,6 +139,7 @@
               <th scope="col">VENDEDOR</th>
               <th scope="col">DIRECCIÓN</th>
               <th scope="col">CAC</th>
+              <th scope="col">STATUS</th>
               {% if es_supervisor %}
                 <th scope="col" class="text-center">ACCIONES</th>
               {% endif %}
