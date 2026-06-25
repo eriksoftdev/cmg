@@ -307,7 +307,18 @@ def pospago(request):
         if filtro_curp:
             base_queryset = base_queryset.filter(curp=filtro_curp)
 
-        # Segmentación para los tabs de la interfaz
+# filtro por status pospago
+        filtro_status_pospago = request.GET.get('status_pospago', '').strip()
+
+        if filtro_status_pospago == 'ventas':
+            base_queryset = base_queryset.filter(status_pospago='en_proceso')
+        elif filtro_status_pospago == 'exitosas':
+            base_queryset = base_queryset.filter(status_pospago='exitosa')
+        elif filtro_status_pospago == 'rechazos':
+            base_queryset = base_queryset.exclude(
+                status_pospago='en_proceso').exclude(status_pospago='exitosa')
+
+            # Segmentación para los tabs de la interfaz
         ventas_pospago = base_queryset.filter(
             status_pospago='en_proceso').order_by('-created')
 
@@ -358,6 +369,7 @@ def pospago(request):
             'filtro_curp': filtro_curp,
             'ventas_pospago_usuario': ventas_pospago_usuario,
             'usuarios': User.objects.filter(is_active=True).order_by('username'),
+            'filtro_status_pospago': filtro_status_pospago,
         })
     else:
         # Evitamos que se envien los mismo registros

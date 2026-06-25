@@ -7,31 +7,31 @@
 
       <!-- Fecha Inicio -->
       <div class="col-md-4">
-        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+        <label for="fechaInicio" class="form-label">FECHA INICIO</label>
         <!-- 3. Agregamos value para que la fecha se quede pintada al recargar -->
         <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="{{ fecha_inicio|default:'' }}" />
       </div>
 
       <!-- Fecha Final -->
       <div class="col-md-4">
-        <label for="fechaFin" class="form-label">Fecha Final</label>
+        <label for="fechaFin" class="form-label">FECHA FINAL</label>
         <!-- 3. Agregamos value para que la fecha se quede pintada al recargar -->
         <input type="date" class="form-control" id="fechaFin" name="fechaFin" value="{{ fecha_fin|default:'' }}" />
       </div>
 
       <div class="col-md-4">
-        <label class="form-label font-weight-bold">DN</label>
-        <input type="text" name="dn" class="form-control" value="{{ venta_pospago.dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+        <label for="status_pospago" class="form-label font-weight-bold">STATUS</label>
+        <select class="form-select" id="status_pospago" name="status_pospago" onchange="document.getElementById('filterTabInput').value = this.value">
+          <option value="">SELECCIONAR STATUS</option>
+          <option value="ventas" {% if filtro_status_pospago == 'ventas' %}selected{% endif %}>VENTAS</option>
+          <option value="exitosas" {% if filtro_status_pospago == 'exitosas' %}selected{% endif %}>EXITOSAS</option>
+          <option value="rechazos" {% if filtro_status_pospago == 'rechazos' %}selected{% endif %}>RECHAZOS</option>
+        </select>
       </div>
-
-      <div class="col-md-4">
-        <label class="form-label font-weight-bold">CURP</label>
-        <input type="text" name="curp" class="form-control" value="{{ venta_pospago.curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
-      </div>
-
+      
       {% if es_superior or es_supervisor %}
       <div class="col-md-4">
-        <label for="ventas_pospago_usuario" class="form-label">Usuario</label>
+        <label for="ventas_pospago_usuario" class="form-label">USUARIO</label>
         <select class="form-select" id="ventas_pospago_usuario" name="ventas_pospago_usuario">
           <option value="">SELECCIONAR USUARIO</option>
           {% for u in usuarios %}
@@ -44,6 +44,18 @@
         </select>
       </div>
       {% endif %}
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">DN</label>
+        <input type="text" name="dn" class="form-control" value="{{ venta_pospago.dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">CURP</label>
+        <input type="text" name="curp" class="form-control" value="{{ venta_pospago.curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+      </div>
+
+
        <!-- Acciones -->
       <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
         <a href="?tab={{ request.GET.tab|default:'ventas' }}" class="btn btn-outline-secondary px-4">Limpiar</a>

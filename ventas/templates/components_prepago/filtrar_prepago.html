@@ -20,24 +20,9 @@
       </div>
 
       <div class="col-md-4">
-        <label class="form-label font-weight-bold">DN</label>
-        <input type="text" name="dn" class="form-control" value="{{ filtro_dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label font-weight-bold">CURP</label>
-          <input type="text" name="curp" class="form-control" value="{{ filtro_curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label font-weight-bold">FOLIO</label>
-        <input type="text" name="folio" class="form-control" value="{{ filtro_folio }}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-      </div>
-      
-      <div class="col-md-4">
-        <label for="status_prepago" class="form-label font-weight-bold">ESTATUS</label>
+        <label for="status_prepago" class="form-label font-weight-bold">STATUS</label>
         <select class="form-select" id="status_prepago" name="status_prepago" onchange="document.getElementById('filterTabInput').value = this.value">
-          <option value="">SELECCIONAR ESTATUS</option>
+          <option value="">SELECCIONAR STATUS</option>
           <option value="ventas" {% if filtro_status_prepago == 'ventas' %}selected{% endif %}>VENTAS</option>
           <option value="validadas" {% if filtro_status_prepago == 'validadas' %}selected{% endif %}>VALIDADAS</option>
           <option value="exitosas" {% if filtro_status_prepago == 'exitosas' %}selected{% endif %}>EXITOSAS</option>
@@ -61,6 +46,24 @@
         </select>
       </div>
       {% endif %}
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">DN</label>
+        <input type="text" name="dn" class="form-control" value="{{ filtro_dn }}" maxlength="10" pattern="\d{10}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">CURP</label>
+          <input type="text" name="curp" class="form-control" value="{{ filtro_curp }}" maxlength="18" pattern="[A-Z0-9]{18}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label font-weight-bold">FOLIO</label>
+        <input type="text" name="folio" class="form-control" value="{{ filtro_folio }}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+      </div>
+      
+
+
       <!-- Acciones -->
       <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
         <a href="?tab={{ request.GET.tab|default:'ventas' }}" class="btn btn-outline-secondary px-4">Limpiar</a>
