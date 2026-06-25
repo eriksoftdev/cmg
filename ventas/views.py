@@ -82,6 +82,26 @@ def prepago(request):
         if filtro_folio:
             base_queryset = base_queryset.filter(folio=filtro_folio)
 
+# filtro por status prepago
+        filtro_status_prepago = request.GET.get('status_prepago', '').strip()
+
+        if filtro_status_prepago == 'ventas':
+            base_queryset = base_queryset.filter(acepta_promo=None)
+
+        elif filtro_status_prepago == 'validadas':
+            base_queryset = base_queryset.filter(
+                acepta_promo=True, status='en_proceso')
+
+        elif filtro_status_prepago == 'exitosas':
+            base_queryset = base_queryset.filter(status='exitosa')
+
+        elif filtro_status_prepago == 'rechazos_promo':
+            base_queryset = base_queryset.filter(acepta_promo=False)
+
+        elif filtro_status_prepago == 'rechazos':
+            base_queryset = base_queryset.exclude(acepta_promo=None).exclude(
+                status='exitosa').exclude(status='en_proceso')
+
         # Segmentación para los tabs de la interfaz
         ventas_prepago = base_queryset.filter(
             acepta_promo=None).order_by('-created')
@@ -140,6 +160,7 @@ def prepago(request):
             'filtro_dn': filtro_dn,
             'filtro_curp': filtro_curp,
             'filtro_folio': filtro_folio,
+            'filtro_status_prepago': filtro_status_prepago,
         })
 
         # Lógica POST para crear ventas (El común siempre entra aquí)

@@ -15,7 +15,8 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
+            <li class="nav-item ms-2">
+              <!--               Dropdown para elegir entre prepago y pospago 
               <div class="dropdown">
                 <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-graph-up-arrow"></i>
@@ -30,7 +31,14 @@
                   </li>
                 </ul>
               </div>
+                            -->
+
+              <div class="btn-group" role="group" aria-label="Modulo-Ventas">
+                <a class="btn btn-outline-light" href="{% url 'prepago' %}"><i class="bi bi-phone-vibrate me-1"></i>Prepago</a>
+                <a class="btn btn-outline-light" href="{% url 'pospago' %}"><i class="bi bi-person-bounding-box me-1"></i>Pospago</a>
+              </div>
             </li>
+
             <li class="nav-item ms-2">
               <a class="btn btn-outline-light" href="{% url 'notas' %}"><i class="bi bi-pencil-square me-1"></i>Notas</a>
             </li>

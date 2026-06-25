@@ -7,14 +7,14 @@
 
       <!-- Fecha Inicio -->
       <div class="col-md-4">
-        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+        <label for="fechaInicio" class="form-label">FECHA INICIO</label>
         <!-- 3. Agregamos value para que la fecha se quede pintada al recargar -->
         <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="{{ fecha_inicio|default:'' }}" />
       </div>
 
       <!-- Fecha Final -->
       <div class="col-md-4">
-        <label for="fechaFin" class="form-label">Fecha Final</label>
+        <label for="fechaFin" class="form-label">FECHA FINAL</label>
         <!-- 3. Agregamos value para que la fecha se quede pintada al recargar -->
         <input type="date" class="form-control" id="fechaFin" name="fechaFin" value="{{ fecha_fin|default:'' }}" />
       </div>
@@ -33,9 +33,22 @@
         <label class="form-label font-weight-bold">FOLIO</label>
         <input type="text" name="folio" class="form-control" value="{{ filtro_folio }}" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
       </div>
+      
+      <div class="col-md-4">
+        <label for="status_prepago" class="form-label font-weight-bold">ESTATUS</label>
+        <select class="form-select" id="status_prepago" name="status_prepago" onchange="document.getElementById('filterTabInput').value = this.value">
+          <option value="">SELECCIONAR ESTATUS</option>
+          <option value="ventas" {% if filtro_status_prepago == 'ventas' %}selected{% endif %}>VENTAS</option>
+          <option value="validadas" {% if filtro_status_prepago == 'validadas' %}selected{% endif %}>VALIDADAS</option>
+          <option value="exitosas" {% if filtro_status_prepago == 'exitosas' %}selected{% endif %}>EXITOSAS</option>
+          <option value="rechazos_promo" {% if filtro_status_prepago == 'rechazos_promo' %}selected{% endif %}>RECHAZOS PROMO</option>
+          <option value="rechazos" {% if filtro_status_prepago == 'rechazos' %}selected{% endif %}>RECHAZOS</option>
+        </select>
+      </div>
+
       {% if es_superior or es_supervisor%}
       <div class="col-md-4">
-        <label for="ventas_prepago_usuario" class="form-label">Usuario</label>
+        <label for="ventas_prepago_usuario" class="form-label">USUARIO</label>
         <select class="form-select" id="ventas_prepago_usuario" name="ventas_prepago_usuario">
           <option value="">SELECCIONAR USUARIO</option>
           {% for u in usuarios %}
