@@ -6,6 +6,7 @@ from .forms_pospago import VentaPospagoForm
 from .models import VentaPospago
 from django.contrib import messages
 from django.urls import reverse
+from django.core.paginator import Paginator
 # para ver que se no se envien los mismo registros import time
 # import time
 
@@ -103,9 +104,21 @@ def prepago(request):
                 status='exitosa').exclude(status='en_proceso')
 
         # Segmentación para los tabs de la interfaz
+
+        # tab de ventas prepago
         ventas_prepago = base_queryset.filter(
             acepta_promo=None).order_by('-created')
 
+        # paginacion de ventas prepago
+        ventas_page = request.GET.get('ventas_page', 1)
+
+        ventas_prepago = Paginator(ventas_prepago, 5).get_page(ventas_page)
+
+        params = request.GET.copy()
+        if "ventas_page" in params:
+            params.pop("ventas_page")
+
+        # tab de ventas validadas
         ventas_prepago_validadas = base_queryset.filter(
             acepta_promo=True, status='en_proceso').order_by('-created')
 
@@ -161,6 +174,8 @@ def prepago(request):
             'filtro_curp': filtro_curp,
             'filtro_folio': filtro_folio,
             'filtro_status_prepago': filtro_status_prepago,
+            # Para mantener los filtros de búsqueda en la paginación
+            'params': params.urlencode(),
         })
 
         # Lógica POST para crear ventas (El común siempre entra aquí)

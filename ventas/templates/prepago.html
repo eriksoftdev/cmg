@@ -53,7 +53,7 @@
   <div class="container mt-5 mb-5" id="moduloVentas">
     <ul class="nav nav-pills nav-justified mb-4 shadow-sm p-1 bg-white rounded fw-bold">
       <li class="nav-item">
-        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago|length }}</span></button>
+        <button class="nav-link {% if not request.GET.tab or request.GET.tab == 'ventas' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#ventas"><i class="bi bi-list-stars me-1"></i> Ventas<span class="badge rounded-pill bg-primary-subtle text-primary ms-1 px-2.5 py-1">{{ ventas_prepago.paginator.count }}</span></button>
       </li>
 
       <li class="nav-item">
@@ -150,6 +150,25 @@
             {% endfor %}
           </tbody>
         </table>
+        <nav class="mt-3">
+          <ul class="pagination justify-content-center">
+            {% if ventas_prepago.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?{{ params }}&ventas_page={{ ventas_prepago.previous_page_number }}">Anterior</a>
+              </li>
+            {% endif %}
+
+            <li class="page-item active">
+              <span class="page-link">{{ ventas_prepago.number }}</span>
+            </li>
+
+            {% if ventas_prepago.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?{{ params }}&ventas_page={{ ventas_prepago.next_page_number }}">Siguiente</a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
       </div>
       <!-- Termina seccion de tab-pane de ventas -->
 
