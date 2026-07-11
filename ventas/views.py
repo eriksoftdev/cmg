@@ -103,20 +103,17 @@ def prepago(request):
             base_queryset = base_queryset.exclude(acepta_promo=None).exclude(
                 status='exitosa').exclude(status='en_proceso')
 
+        # funcion para paginacion
+
+        def paginar(queryset, request, parametro):
+            pagina = request.GET.get(parametro, 1)
+            return Paginator(queryset, 5).get_page(pagina)
+
         # Segmentación para los tabs de la interfaz
 
         # tab de ventas prepago
         ventas_prepago = base_queryset.filter(
             acepta_promo=None).order_by('-created')
-
-        # paginacion de ventas prepago
-        ventas_page = request.GET.get('ventas_page', 1)
-
-        ventas_prepago = Paginator(ventas_prepago, 5).get_page(ventas_page)
-
-        params = request.GET.copy()
-        if "ventas_page" in params:
-            params.pop("ventas_page")
 
         # tab de ventas validadas
         ventas_prepago_validadas = base_queryset.filter(
@@ -130,6 +127,50 @@ def prepago(request):
 
         ventas_prepago_rechazos = base_queryset.exclude(acepta_promo=None).exclude(
             status='exitosa').exclude(status='en_proceso').order_by('-created')
+
+        # paginacion para cada tab
+
+        ventas_prepago = paginar(
+            ventas_prepago,
+            request,
+            'ventas_page'
+        )
+
+        ventas_prepago_validadas = paginar(
+            ventas_prepago_validadas,
+            request,
+            'ventas_validadas_page'
+        )
+
+        ventas_prepago_exitosas = paginar(
+            ventas_prepago_exitosas,
+            request,
+            'ventas_exitosas_page'
+        )
+
+        ventas_prepago_rechazos_promo = paginar(
+            ventas_prepago_rechazos_promo,
+            request,
+            'ventas_rechazos_promo_page'
+        )
+
+        ventas_prepago_rechazos = paginar(
+            ventas_prepago_rechazos,
+            request,
+            'ventas_rechazos_page'
+        )
+
+        params = request.GET.copy()
+
+        for page in [
+            'ventas_page',
+            'ventas_validadas_page',
+            'ventas_exitosas_page',
+            'ventas_rechazos_promo_page',
+            'ventas_rechazos_page',
+            'tab'
+        ]:
+            params.pop(page, None)
 
         # exportar a csv
 
