@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-l)-%i*9s_2lc-n3h2&=p&s(arffrxzjatxywwkr+r1_89#t2sq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cmg-gir2.onrender.com']
 
 
 # Application definition
@@ -123,4 +123,5 @@ LOGIN_REDIRECT_URL = '/ventas/'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'login'
 
+# Para render se agrego esta linea al igual que import os arriba y en allowed hosts, nota por si hay que deshacer esos cambios
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
