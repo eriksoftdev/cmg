@@ -103,11 +103,11 @@ def prepago(request):
             base_queryset = base_queryset.exclude(acepta_promo=None).exclude(
                 status='exitosa').exclude(status='en_proceso')
 
-        # funcion para paginacion
+        # funcion para paginacion prepago
 
         def paginar(queryset, request, parametro):
             pagina = request.GET.get(parametro, 1)
-            return Paginator(queryset, 5).get_page(pagina)
+            return Paginator(queryset, 20).get_page(pagina)
 
         # Segmentación para los tabs de la interfaz
 
@@ -184,15 +184,15 @@ def prepago(request):
             writer = csv.writer(response)
 
             writer.writerow(['CLIENTE', 'CURP', 'DN', 'NIP',
-                            'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'VICIDIAL', 'FOLIO', 'USUARIO MARCADOR', 'STATUS', 'CREADO'])
+                            'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'USERNAME VENDEDOR', 'VICIDIAL', 'FOLIO', 'USUARIO MARCADOR', 'STATUS', 'CREADO'])
             for venta_prepago in base_queryset.order_by('-created'):
                 cliente = f"{venta_prepago.nombre} {venta_prepago.apellido_paterno} {venta_prepago.apellido_materno}".strip()
                 writer.writerow([cliente, venta_prepago.curp,
                                 venta_prepago.dn, venta_prepago.nip, venta_prepago.contact1,
                                 venta_prepago.contact2, venta_prepago.email,
                                 venta_prepago.fvc.strftime(
-                                    '%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.marcador,
-                                venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.get_status_display(), venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S')])
+                                    '%d-%m-%Y'), venta_prepago.user.get_full_name(), venta_prepago.user.username, venta_prepago.marcador,
+                                venta_prepago.folio, venta_prepago.usuario_marcador, venta_prepago.get_status_display(), venta_prepago.created.strftime('%d-%m-%Y %H:%M:%S'), ])
             return response
 
         return render(request, 'prepago.html', {
@@ -374,6 +374,12 @@ def pospago(request):
             base_queryset = base_queryset.exclude(
                 status_pospago='en_proceso').exclude(status_pospago='exitosa')
 
+        # funcion para paginacion pospago
+
+        def paginar_pospago(queryset, request, parametro):
+            pagina_pospago = request.GET.get(parametro, 1)
+            return Paginator(queryset, 20).get_page(pagina_pospago)
+
             # Segmentación para los tabs de la interfaz
         ventas_pospago = base_queryset.filter(
             status_pospago='en_proceso').order_by('-created')
@@ -383,8 +389,36 @@ def pospago(request):
                                                )
         ventas_pospago_rechazos = base_queryset.exclude(
             status_pospago='en_proceso').exclude(status_pospago='exitosa').order_by('-created')
+        # paginacion para cada tab pospago
 
-        # exportar pospago a csv
+        ventas_pospago = paginar_pospago(
+            ventas_pospago,
+            request,
+            'ventas_pospago_page'
+        )
+
+        ventas_pospago_exitosas = paginar_pospago(
+            ventas_pospago_exitosas,
+            request,
+            'ventas_pospago_exitosas_page'
+        )
+
+        ventas_pospago_rechazos = paginar_pospago(
+            ventas_pospago_rechazos,
+            request,
+            'ventas_pospago_rechazos_page'
+        )
+        params_pospago = request.GET.copy()
+
+        for page_pospago in [
+            'ventas_pospago_page',
+            'ventas_pospago_exitosas_page',
+            'ventas_pospago_rechazos_page',
+            'tab'
+        ]:
+            params_pospago.pop(page_pospago, None)
+
+            # exportar pospago a csv
         if request.GET.get('exportar') == 'true':
             import csv
             from django.http import HttpResponse
@@ -395,7 +429,7 @@ def pospago(request):
             writer = csv.writer(response)
 
             writer.writerow(['CLIENTE', 'FECHA DE NACIMIENTO', 'CURP', 'RFC',
-                            'IDENTIFICACIÓN', 'DN', 'NIP', 'PLAN', 'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'CP', 'ESTADO', 'MUNICIPIO',
+                            'IDENTIFICACIÓN', 'DN', 'NIP', 'PLAN', 'CONTACTO 1', 'CONTACTO 2', 'EMAIL', 'FVC', 'VENDEDOR', 'USERNAME VENDEDOR' 'CP', 'ESTADO', 'MUNICIPIO',
                              'COLONIA', 'CALLE', 'NUMERO EXTERIOR', 'NUMERO INTERIOR', 'STATUS', 'CREADO'])
 
             for venta_pospago in base_queryset.order_by('-created'):
@@ -405,7 +439,7 @@ def pospago(request):
                      venta_pospago.identificacion, venta_pospago.dn, venta_pospago.nip, venta_pospago.get_plan_display(
                     ), venta_pospago.contact1,
                         venta_pospago.contact2, venta_pospago.email, venta_pospago.fvc.strftime(
-                         '%d-%m-%Y'), venta_pospago.user.get_full_name(),
+                         '%d-%m-%Y'), venta_pospago.user.get_full_name(), venta_pospago.user.username,
                         venta_pospago.cp, venta_pospago.estado_republica, venta_pospago.municipio,
                         venta_pospago.colonia, venta_pospago.calle, venta_pospago.numero_exterior, venta_pospago.numero_interior,
                         venta_pospago.get_status_pospago_display(), venta_pospago.created.strftime('%d-%m-%Y %H:%M:%S')])
@@ -426,6 +460,8 @@ def pospago(request):
             'ventas_pospago_usuario': ventas_pospago_usuario,
             'usuarios': User.objects.filter(is_active=True).order_by('username'),
             'filtro_status_pospago': filtro_status_pospago,
+            # Para mantener los filtros de búsqueda en la paginación
+            'params_pospago': params_pospago.urlencode(),
         })
     else:
         # Evitamos que se envien los mismo registros
